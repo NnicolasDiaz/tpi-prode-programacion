@@ -1,0 +1,1793 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prode · World Cup 2026</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Barlow+Condensed:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            display: ['"Barlow Condensed"', 'system-ui', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    :root {
+      /* Tier palette */
+      --c-probable: #10b981;
+      --c-probable-bg: rgba(16,185,129,.12);
+      --c-probable-bd: rgba(16,185,129,.3);
+      --c-media: #f59e0b;
+      --c-media-bg: rgba(245,158,11,.12);
+      --c-media-bd: rgba(245,158,11,.3);
+      --c-malcriada: #f43f5e;
+      --c-malcriada-bg: rgba(244,63,94,.12);
+      --c-malcriada-bd: rgba(244,63,94,.3);
+      /* App surface */
+      --bg: #0b1120;
+      --surface: #111827;
+      --surface2: #1f2937;
+      --border: #2d3748;
+      --border-hover: #4b5563;
+      --text: #f9fafb;
+      --text2: #9ca3af;
+      --text3: #6b7280;
+      --accent: #3b82f6;
+    }
+
+    * { box-sizing: border-box; margin: 0; }
+    body { font-family: 'Inter', system-ui, sans-serif; }
+
+    /* ── Auth ───────────────────────────────────── */
+    .auth-bg {
+      background: linear-gradient(145deg, #0b1120 0%, #1e3a8a 55%, #1d4ed8 100%);
+    }
+    .glass {
+      background: rgba(255,255,255,.08);
+      backdrop-filter: blur(14px);
+      border: 1px solid rgba(255,255,255,.14);
+    }
+
+    /* ── App shell ──────────────────────────────── */
+    #main-app { background: var(--bg); min-height: 100vh; }
+
+    /* ── Animations ─────────────────────────────── */
+    @keyframes fadeUp   { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+    @keyframes spin     { to{transform:rotate(360deg)} }
+    @keyframes pulse    { 0%,100%{opacity:1} 50%{opacity:.35} }
+    @keyframes shimmer  { from{background-position:-200% 0} to{background-position:200% 0} }
+    @keyframes barGrow  { from{width:0%} to{width:var(--bar-w)} }
+
+    .fade-up   { animation: fadeUp .3s ease both; }
+    .spin      { animation: spin .7s linear infinite; display:inline-block; }
+    .pulse-dot { animation: pulse 1.6s ease-in-out infinite; }
+
+    .skeleton {
+      background: linear-gradient(90deg, var(--surface) 25%, var(--surface2) 50%, var(--surface) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+      border-radius: 8px;
+    }
+
+    /* ── Navbar ─────────────────────────────────── */
+    #app-header {
+      background: linear-gradient(90deg, #0b1837 0%, #0f2251 100%);
+      border-bottom: 1px solid rgba(59,130,246,.2);
+    }
+    .nav-active {
+      background: rgba(59,130,246,.18) !important;
+      color: #93c5fd !important;
+    }
+
+    /* ── Match card ─────────────────────────────── */
+    .partido-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      transition: border-color .15s, box-shadow .15s, transform .15s;
+    }
+    .partido-card:hover {
+      border-color: var(--border-hover);
+      box-shadow: 0 8px 36px rgba(0,0,0,.45);
+      transform: translateY(-1px);
+    }
+    .partido-card.t-probable  { border-left: 3px solid var(--c-probable); }
+    .partido-card.t-media     { border-left: 3px solid var(--c-media); }
+    .partido-card.t-malcriada { border-left: 3px solid var(--c-malcriada); }
+
+    /* ── Odds chips ─────────────────────────────── */
+    .odds-wrap { display:flex; gap:8px; }
+    .odds-chip {
+      flex:1; background: #0b1120; border: 1px solid var(--border);
+      border-radius: 10px; padding: 10px 6px; text-align:center;
+      transition: border-color .15s, background .15s; cursor:default;
+    }
+    .odds-chip:hover { border-color: var(--accent); background: rgba(59,130,246,.1); }
+    .odds-chip.highlight { border-color: rgba(16,185,129,.5); background: rgba(16,185,129,.08); }
+    .odds-val  { font-family:'Barlow Condensed',system-ui; font-size:1.5rem; font-weight:800; line-height:1; color: var(--text); }
+    .odds-lbl  { font-size:.6rem; font-weight:600; text-transform:uppercase; letter-spacing:.07em; color: var(--text3); margin-top:3px; }
+
+    /* ── Probability bar ────────────────────────── */
+    .prob-track {
+      height: 7px; border-radius: 99px; background: #0b1120;
+      display:flex; overflow:hidden; gap:2px;
+    }
+    .prob-seg {
+      height:100%; border-radius:99px;
+      width: var(--bar-w);
+      animation: barGrow .7s cubic-bezier(.34,1.1,.64,1) both;
+    }
+    .prob-local    { background: linear-gradient(90deg,#3b82f6,#60a5fa); }
+    .prob-empate   { background: #374151; }
+    .prob-visitante{ background: linear-gradient(90deg,#f59e0b,#fb923c); }
+
+    /* ── Tier badge ─────────────────────────────── */
+    .tier-badge {
+      display:inline-flex; align-items:center; gap:5px;
+      font-size:.6rem; font-weight:700; text-transform:uppercase; letter-spacing:.08em;
+      padding: 3px 9px; border-radius:99px;
+      transition: all 0.2s ease;
+    }
+    .tier-badge:hover { filter: brightness(1.15); transform: scale(1.04); }
+    .tb-probable  { background:var(--c-probable-bg);  color:var(--c-probable);  border:1px solid var(--c-probable-bd); }
+    .tb-media     { background:var(--c-media-bg);     color:var(--c-media);     border:1px solid var(--c-media-bd); }
+    .tb-malcriada { background:var(--c-malcriada-bg); color:var(--c-malcriada); border:1px solid var(--c-malcriada-bd); }
+
+    /* ── Status badge ───────────────────────────── */
+    .sbadge {
+      display:inline-flex; align-items:center; gap:4px;
+      font-size:.65rem; font-weight:600; padding:3px 9px; border-radius:99px;
+    }
+    .sb-azul    { background:rgba(59,130,246,.15);  color:#60a5fa;  border:1px solid rgba(59,130,246,.3); }
+    .sb-verde   { background:rgba(16,185,129,.15);  color:#34d399;  border:1px solid rgba(16,185,129,.3); }
+    .sb-gris    { background:rgba(148,163,184,.1);  color:#94a3b8;  border:1px solid rgba(148,163,184,.2); }
+    .sb-naranja { background:rgba(251,146,60,.15);  color:#fb923c;  border:1px solid rgba(251,146,60,.3); }
+
+    /* ── Score display ──────────────────────────── */
+    .score-big {
+      font-family:'Barlow Condensed',system-ui;
+      font-size:2.4rem; font-weight:900; color:var(--text);
+      letter-spacing:-0.02em; line-height:1;
+      text-shadow: 0 0 20px rgba(59,130,246,0.3);
+    }
+
+    /* ── Score input (modal) ────────────────────── */
+    .score-input {
+      width:72px; text-align:center;
+      font-family:'Barlow Condensed',system-ui;
+      font-size:2.4rem; font-weight:800;
+      border: 2px solid #374151; border-radius:14px;
+      padding: 8px 4px; background:#111827; color:#f9fafb;
+      outline:none; transition:border-color .2s;
+    }
+    .score-input:focus { border-color:#3b82f6; }
+
+    /* ── Admin ──────────────────────────────────── */
+    .admin-input {
+      width:100%; border:1px solid var(--border); border-radius:12px;
+      padding: 10px 14px; font-size:.875rem;
+      background: #0b1120; color: var(--text);
+      outline:none; transition:border-color .2s;
+    }
+    .admin-input:focus { border-color: var(--accent); }
+    .admin-input::placeholder { color: var(--text3); }
+    .admin-select { appearance:none; }
+
+    .sub-active { background: var(--surface2) !important; color: #93c5fd !important; font-weight:600; }
+
+    /* ── Ranking table ──────────────────────────── */
+    .rank-row { border-bottom: 1px solid var(--border); transition:background .1s; }
+    .rank-row:last-child { border-bottom:0; }
+    .rank-row:hover { background: var(--surface2); }
+
+    /* ── Toast ──────────────────────────────────── */
+    #toast { transition:all .3s cubic-bezier(.34,1.56,.64,1); }
+    #toast.hidden { transform:translateY(80px); opacity:0; }
+
+    /* ── Thin scrollbar ─────────────────────────── */
+    .thin-scroll::-webkit-scrollbar { width:4px; }
+    .thin-scroll::-webkit-scrollbar-track { background:transparent; }
+    .thin-scroll::-webkit-scrollbar-thumb { background:var(--border); border-radius:4px; }
+
+    /* ── Analysis cards ─────────────────────────── */
+    .tier-section-header {
+      display:flex; align-items:center; gap:12px; margin-bottom:16px;
+    }
+    .tier-section-line { flex:1; height:1px; }
+    .analysis-rec {
+      display:flex; align-items:center; gap:8px;
+      background: rgba(59,130,246,.07);
+      border: 1px solid rgba(59,130,246,.18);
+      border-left: 3px solid rgba(59,130,246,0.5);
+      border-radius: 10px; padding: 10px 14px; margin-top:12px;
+    }
+
+    /* ── Grouped fecha header ───────────────────── */
+    .fecha-header {
+      display:flex; align-items:center; gap:10px; margin-bottom:14px;
+    }
+    .fecha-bar { width:3px; height:22px; border-radius:99px; background:var(--accent); }
+
+    /* ── WC pill badge ──────────────────────────── */
+    .wc-pill {
+      display:inline-flex; align-items:center; gap:4px;
+      background: linear-gradient(90deg,rgba(59,130,246,.25),rgba(99,102,241,.25));
+      border: 1px solid rgba(99,102,241,.4);
+      border-radius: 99px; padding: 2px 8px;
+      font-size:.6rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase;
+      color: #a5b4fc;
+    }
+
+    /* ── Hero stats banner ──────────────────────── */
+    .hero-banner {
+      background: linear-gradient(135deg, #0d1b3e 0%, #0b1837 60%, #0f2050 100%);
+      border: 1px solid rgba(59,130,246,.2);
+      border-radius: 16px; padding: 16px 20px; margin-bottom: 20px;
+      display: flex; align-items: center; gap: 0;
+    }
+    .hero-stat {
+      flex: 1; text-align: center; padding: 0 8px;
+    }
+    .hero-stat + .hero-stat {
+      border-left: 1px solid rgba(59,130,246,.15);
+    }
+    .hero-stat-val {
+      font-family:'Barlow Condensed',system-ui;
+      font-size: 2rem; font-weight: 900; line-height: 1;
+      color: #f9fafb;
+    }
+    .hero-stat-lbl {
+      font-size: .65rem; font-weight: 600; text-transform: uppercase;
+      letter-spacing: .07em; color: #6b7280; margin-top: 3px;
+    }
+    .hero-stat-icon { font-size: .75rem; margin-bottom: 4px; }
+
+    /* ── Prono result badge (large) ─────────────── */
+    .pron-result-badge {
+      display: flex; flex-direction: column; align-items: center; gap: 6px;
+      padding: 12px; border-radius: 14px; text-align: center;
+    }
+    .pron-result-badge .badge-icon { font-size: 1.5rem; }
+    .pron-result-badge .badge-score {
+      font-family:'Barlow Condensed',system-ui;
+      font-size: 1.4rem; font-weight: 800; letter-spacing: -.01em;
+    }
+    .pron-result-badge .badge-label {
+      font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em;
+    }
+
+    /* ── Ranking bar ────────────────────────────── */
+    .rank-bar-wrap { margin-top: 4px; height: 4px; border-radius: 99px; background: rgba(255,255,255,.06); overflow:hidden; }
+    .rank-bar-fill { height: 100%; border-radius: 99px; background: linear-gradient(90deg,#f59e0b,#fbbf24); transition: width .6s cubic-bezier(.34,1.1,.64,1); }
+
+    /* ── Responsive ─────────────────────────────── */
+    @media (max-width:640px) {
+      .score-big { font-size:2rem; }
+      .odds-val  { font-size:1.2rem; }
+      .team-name { font-size:.9rem; }
+    }
+  </style>
+</head>
+<body class="min-h-screen">
+
+<!-- ═══════════════ LOGIN / REGISTRO ══════════════════ -->
+<div id="auth-screen" class="auth-bg min-h-screen flex items-center justify-center p-4">
+  <div class="absolute inset-0 overflow-hidden pointer-events-none">
+    <div class="absolute -top-24 -left-24 w-96 h-96 bg-blue-500 opacity-5 rounded-full blur-3xl"></div>
+    <div class="absolute -bottom-32 right-0 w-80 h-80 bg-indigo-500 opacity-5 rounded-full blur-3xl"></div>
+  </div>
+
+  <div class="relative w-full max-w-md">
+    <!-- Logo -->
+    <div class="text-center mb-8">
+      <div class="inline-flex items-center justify-center w-20 h-20 glass rounded-3xl mb-4">
+        <span class="text-4xl">⚽</span>
+      </div>
+      <h1 class="text-4xl font-extrabold text-white tracking-tight">Prode UTN</h1>
+      <p class="text-blue-300 text-sm mt-1 font-medium tracking-wide">FRVM · Programación 4 · World Cup 2026</p>
+    </div>
+
+    <!-- Card -->
+    <div class="bg-white rounded-3xl shadow-2xl overflow-hidden">
+      <div class="flex border-b border-slate-100">
+        <button id="tab-login-btn" onclick="showAuthTab('login')"
+          class="flex-1 py-4 text-sm font-semibold text-blue-700 border-b-2 border-blue-600 transition-all">
+          Iniciar Sesión
+        </button>
+        <button id="tab-register-btn" onclick="showAuthTab('register')"
+          class="flex-1 py-4 text-sm font-medium text-slate-400 border-b-2 border-transparent transition-all hover:text-slate-600">
+          Registrarse
+        </button>
+      </div>
+
+      <!-- Login -->
+      <div id="form-login" class="p-7">
+        <div class="space-y-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">Email</label>
+            <div class="relative">
+              <i class="fas fa-envelope absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+              <input id="login-email" type="email" placeholder="tu@email.com" autocomplete="email"
+                class="w-full pl-10 pr-4 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">Contraseña</label>
+            <div class="relative">
+              <i class="fas fa-lock absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+              <input id="login-password" type="password" placeholder="••••••••" autocomplete="current-password"
+                class="w-full pl-10 pr-4 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+            </div>
+          </div>
+          <div id="login-error" class="hidden flex items-center gap-2 text-red-600 text-xs bg-red-50 px-3 py-2.5 rounded-lg">
+            <i class="fas fa-exclamation-circle"></i><span id="login-error-msg"></span>
+          </div>
+          <button id="login-btn" onclick="login()"
+            class="w-full bg-blue-700 hover:bg-blue-800 text-white font-semibold py-3 rounded-xl text-sm transition-all shadow-md">
+            <i class="fas fa-sign-in-alt mr-2"></i>Ingresar
+          </button>
+        </div>
+        <div class="mt-5 p-3 bg-slate-50 rounded-xl border border-slate-100">
+          <p class="text-xs text-slate-400 text-center">
+            <i class="fas fa-key mr-1"></i>Demo admin: <span class="text-slate-600 font-semibold">admin@prode.com</span> / <span class="text-slate-600 font-semibold">admin123</span>
+          </p>
+        </div>
+      </div>
+
+      <!-- Register -->
+      <div id="form-register" class="p-7 hidden">
+        <div class="space-y-3.5">
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">Nombre</label>
+              <input id="reg-nombre" type="text" placeholder="Juan"
+                class="w-full px-3.5 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">Apellido</label>
+              <input id="reg-apellido" type="text" placeholder="Pérez"
+                class="w-full px-3.5 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">Email</label>
+            <div class="relative">
+              <i class="fas fa-envelope absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+              <input id="reg-email" type="email" placeholder="tu@email.com"
+                class="w-full pl-10 pr-4 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">Contraseña</label>
+            <div class="relative">
+              <i class="fas fa-lock absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+              <input id="reg-password" type="password" placeholder="Mínimo 6 caracteres"
+                class="w-full pl-10 pr-4 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+          </div>
+          <div id="register-error" class="hidden flex items-center gap-2 text-red-600 text-xs bg-red-50 px-3 py-2.5 rounded-lg">
+            <i class="fas fa-exclamation-circle"></i><span id="register-error-msg"></span>
+          </div>
+          <div id="register-ok" class="hidden flex items-center gap-2 text-green-700 text-xs bg-green-50 px-3 py-2.5 rounded-lg">
+            <i class="fas fa-check-circle"></i><span>¡Cuenta creada! Iniciá sesión.</span>
+          </div>
+          <button id="register-btn" onclick="register()"
+            class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 rounded-xl text-sm transition-all shadow-md">
+            <i class="fas fa-user-plus mr-2"></i>Crear Cuenta
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ APP PRINCIPAL ═══════════════════════ -->
+<div id="main-app" class="hidden flex-col">
+
+  <!-- NAVBAR -->
+  <header id="app-header" class="sticky top-0 z-30">
+    <div class="max-w-6xl mx-auto px-4">
+      <div class="flex items-center justify-between h-16">
+        <!-- Brand -->
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center text-xl shadow-lg shadow-blue-900/50">⚽</div>
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="text-white font-bold text-base leading-none tracking-tight">Prode UTN</span>
+              <span class="wc-pill">WC 2026</span>
+            </div>
+            <div class="text-gray-500 text-xs leading-none mt-1">FRVM · Prog. 4</div>
+          </div>
+        </div>
+
+        <!-- Nav -->
+        <nav class="flex items-center gap-1">
+          <button onclick="showTab('partidos')" data-tab="partidos"
+            class="nav-btn flex items-center gap-2 px-3.5 py-2 rounded-xl text-sm font-medium text-blue-200 hover:bg-white/10 transition-all">
+            <i class="fas fa-calendar-alt text-xs"></i><span class="hidden sm:inline">Partidos</span>
+          </button>
+          <button onclick="showTab('analisis')" data-tab="analisis"
+            class="nav-btn flex items-center gap-2 px-3.5 py-2 rounded-xl text-sm font-medium text-blue-200 hover:bg-white/10 transition-all">
+            <i class="fas fa-chart-bar text-xs"></i><span class="hidden sm:inline">Análisis</span>
+          </button>
+          <button onclick="showTab('ranking')" data-tab="ranking"
+            class="nav-btn flex items-center gap-2 px-3.5 py-2 rounded-xl text-sm font-medium text-blue-200 hover:bg-white/10 transition-all">
+            <i class="fas fa-trophy text-xs"></i><span class="hidden sm:inline">Ranking</span>
+          </button>
+          <button onclick="showTab('grupos')" data-tab="grupos"
+            class="nav-btn flex items-center gap-2 px-3.5 py-2 rounded-xl text-sm font-medium text-blue-200 hover:bg-white/10 transition-all">
+            <i class="fas fa-users text-xs"></i><span class="hidden sm:inline">Grupos</span>
+          </button>
+          <button id="admin-nav-btn" onclick="showTab('admin')" data-tab="admin"
+            class="nav-btn hidden flex items-center gap-2 px-3.5 py-2 rounded-xl text-sm font-medium text-blue-200 hover:bg-white/10 transition-all">
+            <i class="fas fa-cog text-xs"></i><span class="hidden sm:inline">Admin</span>
+          </button>
+        </nav>
+
+        <!-- User -->
+        <div class="flex items-center gap-3">
+          <div class="text-right hidden md:block">
+            <div class="text-white text-sm font-semibold leading-tight" id="nav-username"></div>
+            <div class="text-blue-400 text-xs leading-tight" id="nav-role"></div>
+          </div>
+          <button onclick="logout()"
+            class="text-blue-300 hover:text-white text-xs font-medium px-3 py-2 rounded-xl hover:bg-white/10 transition-all">
+            <i class="fas fa-sign-out-alt mr-1 sm:mr-0"></i><span class="hidden sm:inline ml-1">Salir</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- CONTENT -->
+  <main class="flex-1 max-w-6xl mx-auto w-full px-4 py-6">
+
+    <!-- ══ TAB PARTIDOS ══════════════════════════════ -->
+    <div id="tab-partidos" class="tab-content">
+      <div class="flex flex-wrap items-end justify-between gap-3 mb-6">
+        <div>
+          <h2 class="text-2xl font-bold text-white">Partidos</h2>
+          <p class="text-gray-400 text-sm mt-0.5">Hacé tus pronósticos antes del cierre</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <div class="relative">
+            <i class="fas fa-filter absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-xs pointer-events-none"></i>
+            <select id="filter-fecha" onchange="loadPartidos()"
+              class="admin-input admin-select pl-8 pr-8 py-2 text-sm w-auto cursor-pointer">
+              <option value="">Todas las jornadas</option>
+            </select>
+          </div>
+          <button onclick="loadPartidos()"
+            class="p-2.5 rounded-xl border border-gray-700 text-gray-400 hover:text-blue-400 hover:border-blue-500/50 transition-all bg-gray-900/50" title="Actualizar">
+            <i class="fas fa-sync-alt text-sm" id="refresh-icon"></i>
+          </button>
+        </div>
+      </div>
+      <div id="partidos-hero"></div>
+      <div id="partidos-container"></div>
+    </div>
+
+    <!-- ══ TAB ANÁLISIS ══════════════════════════════ -->
+    <div id="tab-analisis" class="tab-content hidden">
+      <div class="mb-6">
+        <h2 class="text-2xl font-bold text-white">Análisis de Pronósticos</h2>
+        <p class="text-gray-400 text-sm mt-0.5">Clasificación de partidos por nivel de riesgo</p>
+      </div>
+
+      <!-- Tier legend -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-8">
+        <div class="rounded-2xl p-4" style="background:var(--c-probable-bg);border:1px solid var(--c-probable-bd)">
+          <div class="flex items-center gap-2 mb-2">
+            <i class="fas fa-shield-alt text-sm" style="color:var(--c-probable)"></i>
+            <span class="font-bold text-sm" style="color:var(--c-probable)">La Probable</span>
+          </div>
+          <p class="text-xs text-gray-400 leading-relaxed">Favorito claro &gt;62% de probabilidad. Bajo riesgo, cuota accesible. Ideal para apuestas conservadoras.</p>
+        </div>
+        <div class="rounded-2xl p-4" style="background:var(--c-media-bg);border:1px solid var(--c-media-bd)">
+          <div class="flex items-center gap-2 mb-2">
+            <i class="fas fa-chart-line text-sm" style="color:var(--c-media)"></i>
+            <span class="font-bold text-sm" style="color:var(--c-media)">La Media</span>
+          </div>
+          <p class="text-xs text-gray-400 leading-relaxed">Partido equilibrado. Favorito entre 48–62%. Riesgo moderado con cuota interesante.</p>
+        </div>
+        <div class="rounded-2xl p-4" style="background:var(--c-malcriada-bg);border:1px solid var(--c-malcriada-bd)">
+          <div class="flex items-center gap-2 mb-2">
+            <i class="fas fa-fire text-sm" style="color:var(--c-malcriada)"></i>
+            <span class="font-bold text-sm" style="color:var(--c-malcriada)">La Malcriada</span>
+          </div>
+          <p class="text-xs text-gray-400 leading-relaxed">Resultado impredecible, ningún equipo supera 48%. Alto riesgo, alta recompensa potencial.</p>
+        </div>
+      </div>
+
+      <div id="analisis-container"></div>
+    </div>
+
+    <!-- ══ TAB RANKING ══════════════════════════════ -->
+    <div id="tab-ranking" class="tab-content hidden">
+      <div class="mb-6">
+        <h2 class="text-2xl font-bold text-white">Tabla de Posiciones</h2>
+        <p class="text-gray-400 text-sm mt-0.5">Clasificación global de todos los jugadores</p>
+      </div>
+      <div class="rounded-2xl overflow-hidden border border-gray-700/60" style="background:var(--surface)">
+        <table class="w-full">
+          <thead>
+            <tr style="background:#0b1837;border-bottom:1px solid rgba(59,130,246,.2)">
+              <th class="py-3.5 px-5 text-left text-xs font-semibold uppercase tracking-wider text-gray-400 w-16">#</th>
+              <th class="py-3.5 px-5 text-left text-xs font-semibold uppercase tracking-wider text-gray-400">Jugador</th>
+              <th class="py-3.5 px-5 text-center text-xs font-semibold uppercase tracking-wider text-yellow-400 w-28">
+                <i class="fas fa-star mr-1"></i>Puntos
+              </th>
+              <th class="py-3.5 px-5 text-center text-xs font-semibold uppercase tracking-wider text-emerald-400 w-28 hidden sm:table-cell">
+                <i class="fas fa-bullseye mr-1"></i>Exactos
+              </th>
+            </tr>
+          </thead>
+          <tbody id="ranking-body">
+            <tr><td colspan="4" class="py-12 text-center">
+              <div class="space-y-2 px-8">
+                <div class="skeleton h-10 w-full"></div>
+                <div class="skeleton h-10 w-full"></div>
+                <div class="skeleton h-10 w-full"></div>
+              </div>
+            </td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══ TAB GRUPOS ══════════════════════════════ -->
+    <div id="tab-grupos" class="tab-content hidden">
+      <div class="mb-6">
+        <h2 class="text-2xl font-bold text-white">Grupos Privados</h2>
+        <p class="text-gray-400 text-sm mt-0.5">Compará tu rendimiento con amigos</p>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+        <div class="rounded-2xl border border-gray-700/60 p-6" style="background:var(--surface)">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background:rgba(16,185,129,.15)">
+              <i class="fas fa-plus" style="color:var(--c-probable)"></i>
+            </div>
+            <div>
+              <div class="font-semibold text-white text-sm">Crear Grupo</div>
+              <div class="text-xs text-gray-500">Compartí el código con tus amigos</div>
+            </div>
+          </div>
+          <input id="grupo-nombre" type="text" placeholder="Nombre del grupo (ej: Los pibes)" class="admin-input mb-3">
+          <button onclick="crearGrupo()"
+            class="w-full bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold py-2.5 rounded-xl transition-all">
+            Crear Grupo
+          </button>
+          <div id="grupo-create-msg" class="mt-3 text-sm"></div>
+        </div>
+
+        <div class="rounded-2xl border border-gray-700/60 p-6" style="background:var(--surface)">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background:rgba(59,130,246,.15)">
+              <i class="fas fa-link text-blue-400"></i>
+            </div>
+            <div>
+              <div class="font-semibold text-white text-sm">Unirse a Grupo</div>
+              <div class="text-xs text-gray-500">Ingresá el código que te pasaron</div>
+            </div>
+          </div>
+          <input id="grupo-codigo" type="text" placeholder="Código (ej: AB12CD34)" style="text-transform:uppercase"
+            class="admin-input mb-3 font-mono tracking-widest">
+          <button onclick="unirseGrupo()"
+            class="w-full bg-blue-700 hover:bg-blue-800 text-white text-sm font-semibold py-2.5 rounded-xl transition-all">
+            Unirse
+          </button>
+          <div id="grupo-join-msg" class="mt-3 text-sm"></div>
+        </div>
+      </div>
+
+      <div id="grupo-ranking-section" class="hidden fade-up">
+        <div class="flex items-center gap-2 mb-4">
+          <div class="w-1.5 h-6 bg-blue-500 rounded-full"></div>
+          <h3 class="font-bold text-white">Ranking: <span id="grupo-nombre-display" class="text-blue-400"></span></h3>
+        </div>
+        <div class="rounded-2xl overflow-hidden border border-gray-700/60" style="background:var(--surface)">
+          <table class="w-full">
+            <thead>
+              <tr style="background:#0b1837;border-bottom:1px solid rgba(59,130,246,.2)">
+                <th class="py-3.5 px-5 text-left text-xs font-semibold uppercase tracking-wider text-gray-400 w-16">#</th>
+                <th class="py-3.5 px-5 text-left text-xs font-semibold uppercase tracking-wider text-gray-400">Jugador</th>
+                <th class="py-3.5 px-5 text-center text-xs font-semibold uppercase tracking-wider text-yellow-400 w-28">Puntos</th>
+                <th class="py-3.5 px-5 text-center text-xs font-semibold uppercase tracking-wider text-emerald-400 w-28 hidden sm:table-cell">Exactos</th>
+              </tr>
+            </thead>
+            <tbody id="grupo-ranking-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ TAB ADMIN ══════════════════════════════ -->
+    <div id="tab-admin" class="tab-content hidden">
+      <div class="mb-6">
+        <h2 class="text-2xl font-bold text-white">Panel de Administración</h2>
+        <p class="text-gray-400 text-sm mt-0.5">Gestioná equipos, jornadas y partidos</p>
+      </div>
+
+      <div class="inline-flex gap-1 p-1.5 mb-6 rounded-2xl" style="background:var(--surface)">
+        <button onclick="showAdminSub('equipos')" id="admin-sub-equipos-btn"
+          class="admin-sub-btn sub-active px-5 py-2 rounded-xl text-sm transition-all text-gray-400 font-medium">
+          <i class="fas fa-shield-alt mr-1.5"></i>Equipos
+        </button>
+        <button onclick="showAdminSub('fechas')" id="admin-sub-fechas-btn"
+          class="admin-sub-btn px-5 py-2 rounded-xl text-sm transition-all text-gray-400 font-medium">
+          <i class="fas fa-calendar mr-1.5"></i>Jornadas
+        </button>
+        <button onclick="showAdminSub('partidos-admin')" id="admin-sub-partidos-admin-btn"
+          class="admin-sub-btn px-5 py-2 rounded-xl text-sm transition-all text-gray-400 font-medium">
+          <i class="fas fa-futbol mr-1.5"></i>Partidos
+        </button>
+      </div>
+
+      <!-- Equipos -->
+      <div id="admin-sub-equipos" class="admin-sub fade-up">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+          <div class="rounded-2xl border border-gray-700/60 p-5" style="background:var(--surface)">
+            <h3 class="font-semibold text-white text-sm mb-4">
+              <i class="fas fa-plus-circle mr-2 text-blue-400"></i>Nuevo Equipo
+            </h3>
+            <div class="space-y-3">
+              <input id="equipo-nombre" type="text" placeholder="Nombre completo (ej: Argentina)" class="admin-input">
+              <input id="equipo-abreviatura" type="text" placeholder="Abreviatura (ej: ARG)" maxlength="5" style="text-transform:uppercase"
+                class="admin-input font-mono tracking-widest">
+              <button onclick="crearEquipo()"
+                class="w-full bg-blue-700 hover:bg-blue-800 text-white text-sm font-semibold py-2.5 rounded-xl transition-all">
+                Crear Equipo
+              </button>
+            </div>
+          </div>
+          <div class="lg:col-span-2 rounded-2xl border border-gray-700/60 p-5" style="background:var(--surface)">
+            <h3 class="font-semibold text-white text-sm mb-4">
+              <i class="fas fa-list mr-2 text-gray-500"></i>Equipos Registrados
+            </h3>
+            <div id="equipos-admin-list" class="space-y-2 max-h-72 overflow-y-auto thin-scroll"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Fechas -->
+      <div id="admin-sub-fechas" class="admin-sub hidden">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+          <div class="rounded-2xl border border-gray-700/60 p-5" style="background:var(--surface)">
+            <h3 class="font-semibold text-white text-sm mb-4">
+              <i class="fas fa-plus-circle mr-2 text-blue-400"></i>Nueva Jornada
+            </h3>
+            <div class="space-y-3">
+              <input id="fecha-nombre" type="text" placeholder="ej: Fecha 1 · Grupos" class="admin-input">
+              <button onclick="crearFecha()"
+                class="w-full bg-blue-700 hover:bg-blue-800 text-white text-sm font-semibold py-2.5 rounded-xl transition-all">
+                Crear Jornada
+              </button>
+            </div>
+          </div>
+          <div class="lg:col-span-2 rounded-2xl border border-gray-700/60 p-5" style="background:var(--surface)">
+            <h3 class="font-semibold text-white text-sm mb-4">
+              <i class="fas fa-list mr-2 text-gray-500"></i>Jornadas Registradas
+            </h3>
+            <div id="fechas-admin-list" class="space-y-2 max-h-72 overflow-y-auto thin-scroll"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Partidos admin -->
+      <div id="admin-sub-partidos-admin" class="admin-sub hidden">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+          <div class="rounded-2xl border border-gray-700/60 p-5" style="background:var(--surface)">
+            <h3 class="font-semibold text-white text-sm mb-4">
+              <i class="fas fa-plus-circle mr-2 text-blue-400"></i>Nuevo Partido
+            </h3>
+            <div class="space-y-3">
+              <select id="partido-admin-fecha" class="admin-input admin-select"><option value="">Seleccionar jornada...</option></select>
+              <select id="partido-admin-local" class="admin-input admin-select"><option value="">Equipo local...</option></select>
+              <select id="partido-admin-visitante" class="admin-input admin-select"><option value="">Equipo visitante...</option></select>
+              <input id="partido-admin-hora" type="datetime-local" class="admin-input">
+              <button onclick="crearPartidoAdmin()"
+                class="w-full bg-blue-700 hover:bg-blue-800 text-white text-sm font-semibold py-2.5 rounded-xl transition-all">
+                Crear Partido
+              </button>
+            </div>
+          </div>
+          <div class="lg:col-span-2 rounded-2xl border border-gray-700/60 p-5" style="background:var(--surface)">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="font-semibold text-white text-sm">
+                <i class="fas fa-futbol mr-2 text-gray-500"></i>Gestión de Partidos
+              </h3>
+              <button onclick="loadPartidosAdmin()" class="text-xs text-blue-400 hover:text-blue-300 font-medium">
+                <i class="fas fa-sync-alt mr-1"></i>Actualizar
+              </button>
+            </div>
+            <div id="partidos-admin-list" class="space-y-2 max-h-96 overflow-y-auto thin-scroll"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- ════════ MODAL: PRONÓSTICO ══════════════════════════ -->
+<div id="modal-pronostico"
+  class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-end sm:items-center justify-center z-50 hidden p-0 sm:p-4"
+  onclick="closeIfOutside(event,'modal-pronostico',closePronosticoModal)">
+  <div class="bg-white w-full sm:max-w-sm rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden"
+    onclick="event.stopPropagation()">
+    <div class="sm:hidden flex justify-center pt-3 pb-1">
+      <div class="w-10 h-1 bg-slate-200 rounded-full"></div>
+    </div>
+    <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100">
+      <div>
+        <h3 class="font-bold text-slate-800">Hacer Pronóstico</h3>
+        <p id="modal-partido-label" class="text-xs text-slate-400 mt-0.5"></p>
+      </div>
+      <button onclick="closePronosticoModal()" class="w-9 h-9 rounded-xl flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-all">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="p-6">
+      <div class="flex items-center gap-4 mb-6">
+        <div class="flex-1 flex flex-col items-center gap-2">
+          <span id="modal-local" class="font-semibold text-slate-700 text-sm text-center leading-tight"></span>
+          <span class="text-xs text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">Local</span>
+          <input id="modal-goles-local" type="number" min="0" max="20" value="0" class="score-input">
+        </div>
+        <div class="flex flex-col items-center gap-1">
+          <span class="text-slate-300 font-bold text-2xl">vs</span>
+        </div>
+        <div class="flex-1 flex flex-col items-center gap-2">
+          <span id="modal-visitante" class="font-semibold text-slate-700 text-sm text-center leading-tight"></span>
+          <span class="text-xs text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">Visitante</span>
+          <input id="modal-goles-visitante" type="number" min="0" max="20" value="0" class="score-input">
+        </div>
+      </div>
+      <div id="modal-pronostico-error" class="hidden text-center text-red-600 text-xs bg-red-50 px-3 py-2.5 rounded-xl mb-4">
+        <i class="fas fa-exclamation-circle mr-1"></i><span id="modal-pron-err-msg"></span>
+      </div>
+      <button onclick="submitPronostico()"
+        class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded-2xl text-sm transition-all shadow-lg">
+        <i class="fas fa-check mr-2"></i>Confirmar Pronóstico
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ MODAL: RESULTADO ══════════════════════════ -->
+<div id="modal-resultado"
+  class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-end sm:items-center justify-center z-50 hidden p-0 sm:p-4"
+  onclick="closeIfOutside(event,'modal-resultado',closeResultadoModal)">
+  <div class="bg-white w-full sm:max-w-sm rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden"
+    onclick="event.stopPropagation()">
+    <div class="sm:hidden flex justify-center pt-3 pb-1">
+      <div class="w-10 h-1 bg-slate-200 rounded-full"></div>
+    </div>
+    <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100">
+      <div>
+        <h3 class="font-bold text-slate-800">Cargar Resultado</h3>
+        <p id="modal-resultado-label" class="text-xs text-slate-400 mt-0.5"></p>
+      </div>
+      <button onclick="closeResultadoModal()" class="w-9 h-9 rounded-xl flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-all">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="p-6">
+      <div class="flex items-center gap-4 mb-6">
+        <div class="flex-1 flex flex-col items-center gap-2">
+          <span id="modal-res-local" class="font-semibold text-slate-700 text-sm text-center leading-tight"></span>
+          <span class="text-xs text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">Local</span>
+          <input id="modal-res-goles-local" type="number" min="0" max="20" value="0" class="score-input" style="border-color:#fdba74">
+        </div>
+        <div class="flex flex-col items-center">
+          <span class="text-slate-300 font-bold text-2xl">–</span>
+        </div>
+        <div class="flex-1 flex flex-col items-center gap-2">
+          <span id="modal-res-visitante" class="font-semibold text-slate-700 text-sm text-center leading-tight"></span>
+          <span class="text-xs text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">Visitante</span>
+          <input id="modal-res-goles-visitante" type="number" min="0" max="20" value="0" class="score-input" style="border-color:#fdba74">
+        </div>
+      </div>
+      <div id="modal-resultado-error" class="hidden text-center text-red-600 text-xs bg-red-50 px-3 py-2.5 rounded-xl mb-4">
+        <i class="fas fa-exclamation-circle mr-1"></i><span id="modal-res-err-msg"></span>
+      </div>
+      <button onclick="submitResultado()"
+        class="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-3.5 rounded-2xl text-sm transition-all shadow-lg">
+        <i class="fas fa-flag-checkered mr-2"></i>Finalizar Partido
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 px-5 py-3 rounded-2xl shadow-2xl text-sm font-semibold text-white hidden z-50 flex items-center gap-2 whitespace-nowrap">
+  <i id="toast-icon" class="fas fa-check-circle"></i><span id="toast-msg"></span>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════
+// CONFIG & STATE
+// ═══════════════════════════════════════════════════
+const API = '/api';
+let token = localStorage.getItem('jwt');
+let currentUser = null;
+try { currentUser = JSON.parse(localStorage.getItem('user')); } catch(e) {}
+let currentPartidoId = null;
+let allPartidos = [], allFechas = [], allEquipos = [];
+
+// ═══════════════════════════════════════════════════
+// UTILS
+// ═══════════════════════════════════════════════════
+function parseDate(dt) {
+  if (!dt) return new Date();
+  if (typeof dt === 'string') return new Date(dt);
+  if (Array.isArray(dt)) return new Date(dt[0], dt[1]-1, dt[2], dt[3]||0, dt[4]||0, dt[5]||0);
+  return new Date(dt);
+}
+
+// Country flag map
+const FLAGS = {
+  'Argentina':'🇦🇷','Brasil':'🇧🇷','Brazil':'🇧🇷','Francia':'🇫🇷','France':'🇫🇷',
+  'Alemania':'🇩🇪','Germany':'🇩🇪','España':'🇪🇸','Spain':'🇪🇸','Portugal':'🇵🇹',
+  'Italia':'🇮🇹','Italy':'🇮🇹','Uruguay':'🇺🇾','Colombia':'🇨🇴','México':'🇲🇽',
+  'Mexico':'🇲🇽','USA':'🇺🇸','Estados Unidos':'🇺🇸','Canadá':'🇨🇦','Canada':'🇨🇦',
+  'Marruecos':'🇲🇦','Morocco':'🇲🇦','Japón':'🇯🇵','Japan':'🇯🇵','Corea':'🇰🇷',
+  'Países Bajos':'🇳🇱','Netherlands':'🇳🇱','Holanda':'🇳🇱','Croacia':'🇭🇷',
+  'Croatia':'🇭🇷','Senegal':'🇸🇳','Ecuador':'🇪🇨','Perú':'🇵🇪','Peru':'🇵🇪',
+  'Chile':'🇨🇱','Australia':'🇦🇺','Serbia':'🇷🇸','Suiza':'🇨🇭','Switzerland':'🇨🇭',
+  'Ghana':'🇬🇭','Nigeria':'🇳🇬','Polonia':'🇵🇱','Dinamarca':'🇩🇰','Bélgica':'🇧🇪',
+  'Belgium':'🇧🇪','Inglaterra':'🏴󠁧󠁢󠁥󠁮󠁧󠁿','England':'🏴󠁧󠁢󠁥󠁮󠁧󠁿','Egipto':'🇪🇬','Egypt':'🇪🇬',
+  'Arabia Saudita':'🇸🇦','Camerún':'🇨🇲','Venezuela':'🇻🇪','Paraguay':'🇵🇾',
+  'Bolivia':'🇧🇴','Costa Rica':'🇨🇷','Panamá':'🇵🇦','Jamaica':'🇯🇲'
+};
+
+function getFlag(nombre) {
+  return FLAGS[nombre] || '⚽';
+}
+
+// Deterministic hash for consistent odds
+function teamHash(idA, idB) {
+  const h = ((idA * 2654435761) ^ (idB * 2246822519)) >>> 0;
+  return h;
+}
+
+// Tier config
+const TIER = {
+  probable: {
+    label: 'La Probable', icon: 'fas fa-shield-alt',
+    cardClass: 't-probable', badgeClass: 'tb-probable',
+    color: 'var(--c-probable)', lineColor: '#10b981'
+  },
+  media: {
+    label: 'La Media', icon: 'fas fa-chart-line',
+    cardClass: 't-media', badgeClass: 'tb-media',
+    color: 'var(--c-media)', lineColor: '#f59e0b'
+  },
+  malcriada: {
+    label: 'La Malcriada', icon: 'fas fa-fire',
+    cardClass: 't-malcriada', badgeClass: 'tb-malcriada',
+    color: 'var(--c-malcriada)', lineColor: '#f43f5e'
+  }
+};
+
+function simularAnalisis(partido) {
+  const h = teamHash(partido.equipoLocalId || 1, partido.equipoVisitanteId || 2);
+
+  // Generate consistent raw percentages
+  const rL = 28 + (h % 44);               // 28–71
+  const rE = 14 + ((h >> 8) % 18);        // 14–31
+  const rV = 100 - rL - rE;
+
+  const pLocal     = Math.max(rL, 5);
+  const pEmpate    = Math.max(rE, 10);
+  const pVisitante = Math.max(100 - pLocal - pEmpate, 5);
+
+  // European odds with 7% bookmaker margin
+  const M = 1.07;
+  const oddsLocal     = (M * 100 / pLocal).toFixed(2);
+  const oddsEmpate    = (M * 100 / pEmpate).toFixed(2);
+  const oddsVisitante = (M * 100 / pVisitante).toFixed(2);
+
+  // Tier classification
+  const maxProb = Math.max(pLocal, pVisitante);
+  let tier, recommendation, recOdds, recLabel;
+
+  if (maxProb >= 62) {
+    tier = 'probable';
+    if (pLocal >= pVisitante) {
+      recommendation = partido.equipoLocalNombre;
+      recOdds = oddsLocal; recLabel = 'Victoria Local';
+    } else {
+      recommendation = partido.equipoVisitanteNombre;
+      recOdds = oddsVisitante; recLabel = 'Victoria Visitante';
+    }
+  } else if (maxProb >= 48) {
+    tier = 'media';
+    if (pLocal >= pVisitante) {
+      recommendation = partido.equipoLocalNombre;
+      recOdds = oddsLocal; recLabel = 'Victoria Local';
+    } else {
+      recommendation = partido.equipoVisitanteNombre;
+      recOdds = oddsVisitante; recLabel = 'Victoria Visitante';
+    }
+  } else {
+    tier = 'malcriada';
+    recommendation = 'Partido parejo';
+    recOdds = oddsEmpate; recLabel = 'Posible Empate';
+  }
+
+  return { pLocal, pEmpate, pVisitante, oddsLocal, oddsEmpate, oddsVisitante, tier, recommendation, recOdds, recLabel };
+}
+
+// ═══════════════════════════════════════════════════
+// API
+// ═══════════════════════════════════════════════════
+async function api(method, path, body) {
+  const res = await fetch(API + path, {
+    method,
+    headers: { 'Content-Type':'application/json', ...(token ? {'Authorization':'Bearer '+token} : {}) },
+    body: body !== undefined ? JSON.stringify(body) : undefined
+  });
+  if (res.status === 401) { logout(); return null; }
+  if (res.status === 204) return null;
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.error || data.message || 'Error en la solicitud');
+  return data;
+}
+
+// ═══════════════════════════════════════════════════
+// TOAST
+// ═══════════════════════════════════════════════════
+let _toastTimer;
+function toast(msg, type='ok') {
+  clearTimeout(_toastTimer);
+  const el = document.getElementById('toast');
+  document.getElementById('toast-icon').className =
+    type==='error' ? 'fas fa-times-circle' : type==='warn' ? 'fas fa-exclamation-circle' : 'fas fa-check-circle';
+  document.getElementById('toast-msg').textContent = msg;
+  el.style.background = type==='error' ? '#dc2626' : type==='warn' ? '#d97706' : '#1e293b';
+  el.classList.remove('hidden');
+  _toastTimer = setTimeout(() => el.classList.add('hidden'), 3200);
+}
+
+function closeIfOutside(e, modalId, closeFn) {
+  if (e.target.id === modalId) closeFn();
+}
+
+// ═══════════════════════════════════════════════════
+// AUTH
+// ═══════════════════════════════════════════════════
+function showAuthTab(tab) {
+  const isLogin = tab === 'login';
+  document.getElementById('form-login').classList.toggle('hidden', !isLogin);
+  document.getElementById('form-register').classList.toggle('hidden', isLogin);
+  const active = 'flex-1 py-4 text-sm font-semibold text-blue-700 border-b-2 border-blue-600 transition-all';
+  const inactive = 'flex-1 py-4 text-sm font-medium text-slate-400 border-b-2 border-transparent transition-all hover:text-slate-600';
+  document.getElementById('tab-login-btn').className   = isLogin  ? active : inactive;
+  document.getElementById('tab-register-btn').className = !isLogin ? active : inactive;
+}
+
+async function login() {
+  const btn = document.getElementById('login-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fas fa-circle-notch spin mr-2"></i>Ingresando...';
+  document.getElementById('login-error').classList.add('hidden');
+  try {
+    const data = await api('POST', '/auth/login', {
+      email: document.getElementById('login-email').value.trim(),
+      contrasena: document.getElementById('login-password').value
+    });
+    if (!data) return;
+    token = data.token;
+    currentUser = { id:data.id, nombre:data.nombre, apellido:data.apellido, rol:data.rol };
+    localStorage.setItem('jwt', token);
+    localStorage.setItem('user', JSON.stringify(currentUser));
+    showApp();
+  } catch(e) {
+    document.getElementById('login-error-msg').textContent = e.message;
+    document.getElementById('login-error').classList.remove('hidden');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fas fa-sign-in-alt mr-2"></i>Ingresar';
+  }
+}
+
+async function register() {
+  const btn = document.getElementById('register-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fas fa-circle-notch spin mr-2"></i>Creando cuenta...';
+  const errEl = document.getElementById('register-error');
+  const okEl  = document.getElementById('register-ok');
+  errEl.classList.add('hidden'); okEl.classList.add('hidden');
+  try {
+    await api('POST', '/auth/register', {
+      nombre:    document.getElementById('reg-nombre').value.trim(),
+      apellido:  document.getElementById('reg-apellido').value.trim(),
+      email:     document.getElementById('reg-email').value.trim(),
+      contrasena:document.getElementById('reg-password').value
+    });
+    okEl.classList.remove('hidden');
+    setTimeout(() => showAuthTab('login'), 1800);
+  } catch(e) {
+    document.getElementById('register-error-msg').textContent = e.message;
+    errEl.classList.remove('hidden');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fas fa-user-plus mr-2"></i>Crear Cuenta';
+  }
+}
+
+function logout() {
+  token = null; currentUser = null;
+  localStorage.removeItem('jwt'); localStorage.removeItem('user');
+  document.getElementById('main-app').classList.add('hidden');
+  document.getElementById('main-app').classList.remove('flex');
+  document.getElementById('auth-screen').classList.remove('hidden');
+}
+
+function showApp() {
+  document.getElementById('auth-screen').classList.add('hidden');
+  document.getElementById('main-app').classList.remove('hidden');
+  document.getElementById('main-app').classList.add('flex');
+  document.getElementById('nav-username').textContent = `${currentUser.nombre} ${currentUser.apellido}`;
+  const isAdmin = currentUser.rol === 'ADMINISTRADOR';
+  document.getElementById('nav-role').textContent = isAdmin ? '⭐ Administrador' : '🎮 Jugador';
+  if (isAdmin) document.getElementById('admin-nav-btn').classList.remove('hidden');
+  showTab('partidos');
+}
+
+// ═══════════════════════════════════════════════════
+// TABS
+// ═══════════════════════════════════════════════════
+function showTab(tab) {
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+  const tabEl = document.getElementById('tab-' + tab);
+  if (!tabEl) return;
+  tabEl.classList.remove('hidden');
+  tabEl.classList.add('fade-up');
+  document.querySelectorAll('.nav-btn').forEach(btn => {
+    btn.classList.toggle('nav-active', btn.dataset.tab === tab);
+  });
+  if      (tab === 'partidos') loadPartidos();
+  else if (tab === 'analisis') loadAnalisis();
+  else if (tab === 'ranking')  loadRanking();
+  else if (tab === 'admin')    loadAdmin();
+}
+
+function showAdminSub(sub) {
+  document.querySelectorAll('.admin-sub').forEach(el => el.classList.add('hidden'));
+  document.querySelectorAll('.admin-sub-btn').forEach(btn => {
+    btn.classList.remove('sub-active');
+  });
+  const el = document.getElementById('admin-sub-' + sub);
+  if (el) { el.classList.remove('hidden'); el.classList.add('fade-up'); }
+  const btn = document.getElementById('admin-sub-' + sub + '-btn');
+  if (btn) btn.classList.add('sub-active');
+}
+
+// ═══════════════════════════════════════════════════
+// PARTIDOS
+// ═══════════════════════════════════════════════════
+async function loadPartidos() {
+  const fechaId = document.getElementById('filter-fecha').value;
+  const url = fechaId ? `/partidos?fechaId=${fechaId}` : '/partidos';
+  const container = document.getElementById('partidos-container');
+
+  container.innerHTML = [0,1,2].map(() => `
+    <div class="partido-card p-5 mb-4 fade-up">
+      <div class="skeleton h-4 w-28 mb-4"></div>
+      <div class="flex items-center justify-between mb-4">
+        <div class="skeleton h-6 w-32"></div>
+        <div class="skeleton h-8 w-24 rounded-xl"></div>
+        <div class="skeleton h-6 w-32"></div>
+      </div>
+      <div class="skeleton h-7 w-full rounded-xl mb-2"></div>
+      <div class="skeleton h-2 w-full rounded-full"></div>
+    </div>`).join('');
+
+  document.getElementById('refresh-icon').classList.add('spin');
+  try {
+    const [partidos, fechas, misProns] = await Promise.all([
+      api('GET', url), api('GET', '/fechas'), api('GET', '/pronosticos/mios')
+    ]);
+    allPartidos = partidos || [];
+    allFechas   = fechas   || [];
+
+    const sel = document.getElementById('filter-fecha');
+    const prev = sel.value;
+    sel.innerHTML = '<option value="">Todas las jornadas</option>' +
+      allFechas.map(f => `<option value="${f.id}" ${String(f.id)===prev?'selected':''}>${f.nombre}</option>`).join('');
+
+    const pronMap = {};
+    (misProns || []).forEach(p => { pronMap[p.partidoId] = p; });
+
+    // Hero banner
+    const upcoming = allPartidos.filter(p => p.estado === 'POR_JUGARSE').length;
+    const myPts = (misProns || []).reduce((acc, p) => {
+      if (p.resultadoPronostico === 'EXACTO') return acc + 3;
+      if (p.resultadoPronostico === 'TENDENCIA') return acc + 1;
+      return acc;
+    }, 0);
+    const heroEl = document.getElementById('partidos-hero');
+    if (heroEl) {
+      heroEl.innerHTML = `<div class="hero-banner fade-up">
+        <div class="hero-stat">
+          <div class="hero-stat-icon text-blue-400"><i class="fas fa-calendar-alt"></i></div>
+          <div class="hero-stat-val">${upcoming}</div>
+          <div class="hero-stat-lbl">Próximos</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-icon text-yellow-400"><i class="fas fa-star"></i></div>
+          <div class="hero-stat-val" style="color:#fbbf24">${myPts}</div>
+          <div class="hero-stat-lbl">Mis puntos</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-icon" style="font-size:1rem">⚽</div>
+          <div class="hero-stat-val" style="font-size:1rem;font-family:'Inter',system-ui;font-weight:700;color:#6b7280">WC 2026</div>
+          <div class="hero-stat-lbl">Mundial</div>
+        </div>
+      </div>`;
+    }
+
+    if (!allPartidos.length) {
+      container.innerHTML = `
+        <div class="flex flex-col items-center justify-center py-24 text-gray-500">
+          <div class="w-20 h-20 rounded-3xl flex items-center justify-center mb-4" style="background:var(--surface2)">
+            <i class="fas fa-calendar-times text-3xl text-gray-600"></i>
+          </div>
+          <p class="font-semibold text-gray-400">No hay partidos cargados</p>
+          <p class="text-sm mt-1 text-gray-600">${currentUser.rol==='ADMINISTRADOR'?'Creá equipos, jornadas y partidos desde Admin':'Volvé más tarde cuando el admin cargue los partidos'}</p>
+        </div>`;
+      return;
+    }
+
+    const byFecha = {};
+    allPartidos.forEach(p => {
+      if (!byFecha[p.fechaId]) byFecha[p.fechaId] = { nombre: p.fechaNombre, partidos: [] };
+      byFecha[p.fechaId].partidos.push(p);
+    });
+
+    container.innerHTML = Object.values(byFecha).map(g => `
+      <div class="mb-8">
+        <div class="fecha-header mb-4">
+          <div class="fecha-bar"></div>
+          <h3 class="font-bold text-white text-base">${g.nombre}</h3>
+          <div class="flex-1 h-px bg-gray-800"></div>
+          <span class="text-xs text-gray-600">${g.partidos.length} partido${g.partidos.length!==1?'s':''}</span>
+        </div>
+        <div class="grid grid-cols-1 gap-4">
+          ${g.partidos.map(p => renderPartido(p, pronMap[p.id])).join('')}
+        </div>
+      </div>`).join('');
+  } catch(e) {
+    container.innerHTML = `
+      <div class="text-center py-12">
+        <i class="fas fa-exclamation-triangle text-2xl text-red-500 mb-2 block"></i>
+        <p class="text-red-400 text-sm">${e.message}</p>
+      </div>`;
+  } finally {
+    document.getElementById('refresh-icon').classList.remove('spin');
+  }
+}
+
+function renderPartido(p, miPron) {
+  const isAdmin = currentUser?.rol === 'ADMINISTRADOR';
+  const an = simularAnalisis(p);
+  const t = TIER[an.tier];
+
+  const flagL = getFlag(p.equipoLocalNombre);
+  const flagV = getFlag(p.equipoVisitanteNombre);
+
+  // Status badge
+  const statusBadge = {
+    POR_JUGARSE: `<span class="sbadge sb-azul"><i class="fas fa-clock"></i>Por jugarse</span>`,
+    EN_JUEGO:    `<span class="sbadge sb-verde pulse-dot"><i class="fas fa-circle"></i>En juego</span>`,
+    FINALIZADO:  `<span class="sbadge sb-gris"><i class="fas fa-check"></i>Finalizado</span>`
+  }[p.estado] || '';
+
+  const horaStr = parseDate(p.fechaHoraInicio).toLocaleString('es-AR',{
+    weekday:'short', day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit'
+  });
+
+  // Score or odds section
+  let centerContent = '';
+  if (p.estado === 'FINALIZADO') {
+    const resIcon = p.resultado==='LOCAL' ? flagL : p.resultado==='VISITANTE' ? flagV : '🤝';
+    const resText = p.resultado==='LOCAL' ? 'Ganó Local' : p.resultado==='VISITANTE' ? 'Ganó Visitante' : 'Empate';
+    centerContent = `
+      <div class="text-center px-4">
+        <div class="score-big">${p.golesLocal} – ${p.golesVisitante}</div>
+        <div class="text-xs text-gray-500 mt-1">${resIcon} ${resText}</div>
+      </div>`;
+  } else if (p.estado === 'EN_JUEGO') {
+    centerContent = `
+      <div class="text-center px-4">
+        <div class="score-big text-gray-600">–</div>
+        <div class="text-xs text-emerald-400 font-semibold mt-1 pulse-dot">En curso</div>
+      </div>`;
+  } else {
+    centerContent = `
+      <div class="text-center px-4 min-w-[80px]">
+        <div style="font-family:'Barlow Condensed',system-ui;font-size:1rem;font-weight:700;color:#6b7280">vs</div>
+        <div class="text-xs text-gray-600 mt-1 whitespace-nowrap">${horaStr}</div>
+      </div>`;
+  }
+
+  // Odds + probability (only for non-finished matches)
+  let analysisHtml = '';
+  if (p.estado !== 'FINALIZADO') {
+    const highlightL = an.tier !== 'malcriada' && an.pLocal >= an.pVisitante ? 'highlight' : '';
+    const highlightV = an.tier !== 'malcriada' && an.pVisitante > an.pLocal ? 'highlight' : '';
+    const highlightE = an.tier === 'malcriada' ? 'highlight' : '';
+
+    analysisHtml = `
+      <div class="mt-4 pt-4 border-t border-gray-800">
+        <div class="odds-wrap mb-3">
+          <div class="odds-chip ${highlightL}">
+            <div class="odds-val" style="${highlightL ? 'color:var(--c-probable)' : ''}">${an.oddsLocal}</div>
+            <div class="odds-lbl">Local</div>
+          </div>
+          <div class="odds-chip ${highlightE}">
+            <div class="odds-val" style="${highlightE ? 'color:var(--c-malcriada)' : ''}">${an.oddsEmpate}</div>
+            <div class="odds-lbl">Empate</div>
+          </div>
+          <div class="odds-chip ${highlightV}">
+            <div class="odds-val" style="${highlightV ? 'color:var(--c-probable)' : ''}">${an.oddsVisitante}</div>
+            <div class="odds-lbl">Visitante</div>
+          </div>
+        </div>
+
+        <div class="mb-1.5 flex items-center justify-between text-xs text-gray-500">
+          <span>${p.equipoLocalNombre} <strong class="text-white">${an.pLocal}%</strong></span>
+          <span>Emp. <strong class="text-gray-400">${an.pEmpate}%</strong></span>
+          <span><strong class="text-white">${an.pVisitante}%</strong> ${p.equipoVisitanteNombre}</span>
+        </div>
+        <div class="prob-track">
+          <div class="prob-seg prob-local"    style="--bar-w:${an.pLocal}%"></div>
+          <div class="prob-seg prob-empate"   style="--bar-w:${an.pEmpate}%"></div>
+          <div class="prob-seg prob-visitante"style="--bar-w:${an.pVisitante}%"></div>
+        </div>
+
+        <div class="analysis-rec mt-3">
+          <i class="fas fa-lightbulb text-xs text-blue-400 flex-shrink-0"></i>
+          <span class="text-xs text-gray-400">
+            <span class="font-semibold" style="color:${t.color}">${t.label}:</span>
+            ${an.recLabel} <span class="font-mono font-bold text-white mx-1">@${an.recOdds}</span>
+            <span class="text-gray-600">· ${an.pLocal >= an.pVisitante ? an.pLocal : an.pVisitante}% prob.</span>
+          </span>
+        </div>
+      </div>`;
+  }
+
+  // Footer (pronostico actions)
+  let footer = '';
+  if (!isAdmin) {
+    if (miPron) {
+      const resMap = {
+        EXACTO:     { color:'text-emerald-400', bg:'rgba(16,185,129,.12)', bd:'rgba(16,185,129,.3)', icon:'fas fa-bullseye', txt:'Exacto +3pts' },
+        TENDENCIA:  { color:'text-amber-400',   bg:'rgba(245,158,11,.12)', bd:'rgba(245,158,11,.3)', icon:'fas fa-bolt',     txt:'Tendencia +1pt' },
+        SIN_ACIERTO:{ color:'text-red-400',     bg:'rgba(244,63,94,.12)',  bd:'rgba(244,63,94,.3)',  icon:'fas fa-times',    txt:'Sin acierto' }
+      };
+      const res = miPron.resultadoPronostico ? resMap[miPron.resultadoPronostico] : null;
+      const editBtn = !miPron.resultadoPronostico && p.estado==='POR_JUGARSE'
+        ? `<button onclick="openPronosticoModal(${p.id})" class="text-blue-400 hover:text-blue-300 text-xs font-semibold underline underline-offset-2">Modificar</button>`
+        : '';
+      if (res && p.estado === 'FINALIZADO') {
+        footer = `<div class="mt-4 pt-3 border-t border-gray-800">
+          <div class="pron-result-badge" style="background:${res.bg};border:1px solid ${res.bd}">
+            <div class="badge-icon"><i class="${res.icon} ${res.color}"></i></div>
+            <div class="badge-score ${res.color}">${miPron.golesLocal} – ${miPron.golesVisitante}</div>
+            <div class="badge-label ${res.color}">${res.txt}</div>
+          </div>
+        </div>`;
+      } else {
+        footer = `<div class="mt-4 pt-3 border-t border-gray-800 flex items-center justify-between">
+          <div class="flex items-center gap-2 text-xs text-gray-500">
+            <i class="fas fa-check-circle text-gray-600"></i>
+            Mi pronóstico: <strong class="text-white font-mono">${miPron.golesLocal}–${miPron.golesVisitante}</strong>
+          </div>
+          ${res
+            ? `<span class="text-xs font-semibold px-2.5 py-1 rounded-full ${res.color}" style="background:${res.bg};border:1px solid ${res.bd}"><i class="${res.icon} mr-1"></i>${res.txt}</span>`
+            : editBtn}
+        </div>`;
+      }
+    } else if (p.estado === 'POR_JUGARSE') {
+      footer = `<div class="mt-4 pt-3 border-t border-gray-800 flex justify-center">
+        <button onclick="openPronosticoModal(${p.id})"
+          class="flex items-center gap-2 bg-blue-700 hover:bg-blue-600 text-white text-xs font-semibold px-6 py-2.5 rounded-xl transition-all shadow-md shadow-blue-900/40 active:scale-95">
+          <i class="fas fa-pencil-alt"></i>Hacer Pronóstico
+        </button>
+      </div>`;
+    } else {
+      footer = `<div class="mt-4 pt-3 border-t border-gray-800 text-center text-xs text-gray-700 italic">
+        No hiciste pronóstico para este partido
+      </div>`;
+    }
+  } else if (p.estado === 'POR_JUGARSE') {
+    footer = `<div class="mt-4 pt-3 border-t border-gray-800 flex justify-end">
+      <button onclick="iniciarPartido(${p.id})"
+        class="flex items-center gap-2 bg-emerald-700 hover:bg-emerald-600 text-white text-xs font-semibold px-5 py-2 rounded-xl transition-all">
+        <i class="fas fa-play"></i>Iniciar partido
+      </button>
+    </div>`;
+  } else if (p.estado === 'EN_JUEGO') {
+    footer = `<div class="mt-4 pt-3 border-t border-gray-800 flex justify-end">
+      <button onclick="openResultadoModal(${p.id})"
+        class="flex items-center gap-2 bg-orange-700 hover:bg-orange-600 text-white text-xs font-semibold px-5 py-2 rounded-xl transition-all">
+        <i class="fas fa-flag-checkered"></i>Cargar resultado
+      </button>
+    </div>`;
+  }
+
+  return `<div class="partido-card ${t.cardClass} p-5">
+    <!-- Header row -->
+    <div class="flex items-center justify-between mb-4">
+      <span class="tier-badge ${t.badgeClass}">
+        <i class="${t.icon}"></i>${t.label}
+      </span>
+      <div class="flex items-center gap-2">
+        <span class="text-xs text-gray-600">${p.fechaNombre}</span>
+        ${statusBadge}
+      </div>
+    </div>
+
+    <!-- Teams row -->
+    <div class="flex items-center">
+      <div class="flex-1 text-right pr-3">
+        <div class="text-2xl mb-1">${flagL}</div>
+        <div class="font-bold text-white team-name leading-tight">${p.equipoLocalNombre}</div>
+        <div class="text-xs text-gray-600 mt-0.5">Local</div>
+      </div>
+      ${centerContent}
+      <div class="flex-1 text-left pl-3">
+        <div class="text-2xl mb-1">${flagV}</div>
+        <div class="font-bold text-white team-name leading-tight">${p.equipoVisitanteNombre}</div>
+        <div class="text-xs text-gray-600 mt-0.5">Visitante</div>
+      </div>
+    </div>
+
+    ${analysisHtml}
+    ${footer}
+  </div>`;
+}
+
+// ═══════════════════════════════════════════════════
+// ANÁLISIS TAB
+// ═══════════════════════════════════════════════════
+async function loadAnalisis() {
+  const container = document.getElementById('analisis-container');
+  container.innerHTML = `<div class="skeleton h-40 w-full rounded-2xl mb-4"></div><div class="skeleton h-40 w-full rounded-2xl mb-4"></div>`;
+
+  try {
+    const partidos = await api('GET', '/partidos');
+    allPartidos = partidos || [];
+
+    const upcoming = allPartidos.filter(p => p.estado === 'POR_JUGARSE');
+
+    if (!upcoming.length) {
+      container.innerHTML = `
+        <div class="flex flex-col items-center justify-center py-24 text-gray-500">
+          <i class="fas fa-chart-bar text-4xl text-gray-700 mb-4"></i>
+          <p class="font-semibold text-gray-400">No hay partidos próximos</p>
+          <p class="text-sm text-gray-600 mt-1">El análisis aparece aquí cuando hay partidos por jugarse</p>
+        </div>`;
+      return;
+    }
+
+    // Group by tier
+    const byTier = { probable: [], media: [], malcriada: [] };
+    upcoming.forEach(p => {
+      const an = simularAnalisis(p);
+      byTier[an.tier].push({ p, an });
+    });
+
+    const tierOrder = ['probable', 'media', 'malcriada'];
+    container.innerHTML = tierOrder.map(tierKey => {
+      const items = byTier[tierKey];
+      if (!items.length) return '';
+      const t = TIER[tierKey];
+
+      const cards = items.map(({ p, an }) => {
+        const flagL = getFlag(p.equipoLocalNombre);
+        const flagV = getFlag(p.equipoVisitanteNombre);
+        const highlightL = tierKey !== 'malcriada' && an.pLocal >= an.pVisitante;
+        const highlightV = tierKey !== 'malcriada' && an.pVisitante > an.pLocal;
+        const highlightE = tierKey === 'malcriada';
+
+        return `<div class="rounded-2xl p-5 border" style="background:var(--surface);border-color:var(--border)">
+          <div class="flex items-center justify-between mb-3">
+            <div class="flex items-center gap-2">
+              <span class="text-base">${flagL}</span>
+              <span class="font-bold text-white text-sm">${p.equipoLocalNombre}</span>
+              <span class="text-gray-600 text-xs mx-1">vs</span>
+              <span class="font-bold text-white text-sm">${p.equipoVisitanteNombre}</span>
+              <span class="text-base">${flagV}</span>
+            </div>
+            <span class="text-xs text-gray-600">${p.fechaNombre}</span>
+          </div>
+
+          <div class="flex gap-2 mb-3">
+            <div class="odds-chip flex-1 ${highlightL ? 'highlight' : ''}">
+              <div class="odds-val" style="${highlightL ? 'color:var(--c-probable)' : ''}">${an.oddsLocal}</div>
+              <div class="odds-lbl">${p.equipoLocalNombre.slice(0,6)}</div>
+            </div>
+            <div class="odds-chip flex-1 ${highlightE ? 'highlight' : ''}">
+              <div class="odds-val" style="${highlightE ? 'color:var(--c-malcriada)' : ''}">${an.oddsEmpate}</div>
+              <div class="odds-lbl">Empate</div>
+            </div>
+            <div class="odds-chip flex-1 ${highlightV ? 'highlight' : ''}">
+              <div class="odds-val" style="${highlightV ? 'color:var(--c-probable)' : ''}">${an.oddsVisitante}</div>
+              <div class="odds-lbl">${p.equipoVisitanteNombre.slice(0,6)}</div>
+            </div>
+          </div>
+
+          <div class="prob-track mb-2">
+            <div class="prob-seg prob-local"     style="--bar-w:${an.pLocal}%"></div>
+            <div class="prob-seg prob-empate"    style="--bar-w:${an.pEmpate}%"></div>
+            <div class="prob-seg prob-visitante" style="--bar-w:${an.pVisitante}%"></div>
+          </div>
+          <div class="flex justify-between text-xs text-gray-600">
+            <span>${an.pLocal}% local</span>
+            <span>${an.pEmpate}% empate</span>
+            <span>${an.pVisitante}% visitante</span>
+          </div>
+
+          <div class="analysis-rec mt-3">
+            <i class="fas fa-arrow-right text-xs text-blue-400 flex-shrink-0"></i>
+            <span class="text-xs text-gray-400">
+              Apuesta: <strong class="text-white">${an.recLabel}</strong>
+              <span class="font-mono font-bold ml-1" style="color:${t.color}">@${an.recOdds}</span>
+            </span>
+          </div>
+        </div>`;
+      }).join('');
+
+      return `<div class="mb-8">
+        <div class="tier-section-header">
+          <span class="tier-badge ${t.badgeClass} text-sm px-3 py-1.5">
+            <i class="${t.icon}"></i>${t.label}
+          </span>
+          <div class="tier-section-line" style="background:linear-gradient(90deg,${t.lineColor}40,transparent)"></div>
+          <span class="text-xs text-gray-600">${items.length} partido${items.length!==1?'s':''}</span>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">${cards}</div>
+      </div>`;
+    }).join('');
+  } catch(e) {
+    container.innerHTML = `<div class="text-center py-12 text-red-400"><i class="fas fa-exclamation-circle text-2xl mb-2 block"></i>${e.message}</div>`;
+  }
+}
+
+// ═══════════════════════════════════════════════════
+// MODALES
+// ═══════════════════════════════════════════════════
+function openPronosticoModal(partidoId) {
+  const p = allPartidos.find(x => x.id === partidoId);
+  if (!p) return;
+  currentPartidoId = partidoId;
+  document.getElementById('modal-local').textContent     = p.equipoLocalNombre;
+  document.getElementById('modal-visitante').textContent = p.equipoVisitanteNombre;
+  document.getElementById('modal-partido-label').textContent =
+    `${p.fechaNombre} · ${parseDate(p.fechaHoraInicio).toLocaleString('es-AR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}`;
+  document.getElementById('modal-goles-local').value     = 0;
+  document.getElementById('modal-goles-visitante').value = 0;
+  document.getElementById('modal-pronostico-error').classList.add('hidden');
+  document.getElementById('modal-pronostico').classList.remove('hidden');
+  setTimeout(() => document.getElementById('modal-goles-local').focus(), 100);
+}
+function closePronosticoModal() { document.getElementById('modal-pronostico').classList.add('hidden'); }
+
+async function submitPronostico() {
+  const golesLocal     = parseInt(document.getElementById('modal-goles-local').value)     || 0;
+  const golesVisitante = parseInt(document.getElementById('modal-goles-visitante').value) || 0;
+  document.getElementById('modal-pronostico-error').classList.add('hidden');
+  try {
+    await api('POST', '/pronosticos', { partidoId: currentPartidoId, golesLocal, golesVisitante });
+    toast('¡Pronóstico guardado! ⚽');
+    closePronosticoModal();
+    loadPartidos();
+  } catch(e) {
+    document.getElementById('modal-pron-err-msg').textContent = e.message;
+    document.getElementById('modal-pronostico-error').classList.remove('hidden');
+  }
+}
+
+function openResultadoModal(partidoId) {
+  const p = allPartidos.find(x => x.id === partidoId);
+  if (!p) return;
+  currentPartidoId = partidoId;
+  document.getElementById('modal-res-local').textContent     = p.equipoLocalNombre;
+  document.getElementById('modal-res-visitante').textContent = p.equipoVisitanteNombre;
+  document.getElementById('modal-resultado-label').textContent = `${p.fechaNombre} · ${p.equipoLocalNombre} vs ${p.equipoVisitanteNombre}`;
+  document.getElementById('modal-res-goles-local').value     = 0;
+  document.getElementById('modal-res-goles-visitante').value = 0;
+  document.getElementById('modal-resultado-error').classList.add('hidden');
+  document.getElementById('modal-resultado').classList.remove('hidden');
+}
+function closeResultadoModal() { document.getElementById('modal-resultado').classList.add('hidden'); }
+
+async function submitResultado() {
+  const golesLocal     = parseInt(document.getElementById('modal-res-goles-local').value)     || 0;
+  const golesVisitante = parseInt(document.getElementById('modal-res-goles-visitante').value) || 0;
+  document.getElementById('modal-resultado-error').classList.add('hidden');
+  try {
+    await api('PATCH', `/partidos/${currentPartidoId}/resultado`, { golesLocal, golesVisitante });
+    toast('🎉 Resultado cargado. Puntos calculados!');
+    closeResultadoModal();
+    loadPartidosAdmin();
+  } catch(e) {
+    document.getElementById('modal-res-err-msg').textContent = e.message;
+    document.getElementById('modal-resultado-error').classList.remove('hidden');
+  }
+}
+
+// ═══════════════════════════════════════════════════
+// RANKING
+// ═══════════════════════════════════════════════════
+async function loadRanking() {
+  const tbody = document.getElementById('ranking-body');
+  try {
+    const ranking = await api('GET', '/ranking');
+    const medals = ['🥇','🥈','🥉'];
+    if (!(ranking||[]).length) {
+      tbody.innerHTML = `<tr><td colspan="4" class="text-center py-16">
+        <i class="fas fa-trophy text-4xl text-gray-700 mb-3 block"></i>
+        <p class="text-gray-500">Sin participantes todavía</p>
+      </td></tr>`;
+      return;
+    }
+    const maxPuntos = ranking[0]?.puntos || 1;
+    tbody.innerHTML = ranking.map((r, i) => {
+      const isMe = currentUser && r.nombre===currentUser.nombre && r.apellido===currentUser.apellido;
+      const rowBg = i===0 ? 'rgba(245,158,11,.07)' : i===1 ? 'rgba(148,163,184,.04)' : i===2 ? 'rgba(205,127,50,.06)' : '';
+      const barPct = maxPuntos > 0 ? Math.round((r.puntos / maxPuntos) * 100) : 0;
+      return `<tr class="rank-row ${isMe ? 'ring-1 ring-inset ring-blue-500/30' : ''}" style="background:${rowBg}">
+        <td class="py-4 px-5 text-base">${i<3 ? medals[i] : `<span class="font-mono font-bold text-gray-500">${r.posicion}</span>`}</td>
+        <td class="py-4 px-5">
+          <div class="font-semibold text-white text-sm">${r.nombre} ${r.apellido}</div>
+          ${isMe ? '<div class="text-xs text-blue-400 font-medium">← vos</div>' : ''}
+        </td>
+        <td class="py-4 px-5 text-center">
+          <span class="font-display font-extrabold text-yellow-400 text-xl" style="font-family:'Barlow Condensed',system-ui">${r.puntos}</span>
+          <span class="text-xs text-gray-600 ml-0.5">pts</span>
+          <div class="rank-bar-wrap mt-1" style="width:80px;margin:4px auto 0">
+            <div class="rank-bar-fill" style="width:${barPct}%"></div>
+          </div>
+        </td>
+        <td class="py-4 px-5 text-center hidden sm:table-cell">
+          <span class="font-semibold text-emerald-400">${r.cantidadExactos}</span>
+        </td>
+      </tr>`;
+    }).join('');
+  } catch(e) {
+    tbody.innerHTML = `<tr><td colspan="4" class="text-center py-8 text-red-400">${e.message}</td></tr>`;
+  }
+}
+
+// ═══════════════════════════════════════════════════
+// GRUPOS
+// ═══════════════════════════════════════════════════
+async function crearGrupo() {
+  const nombre = document.getElementById('grupo-nombre').value.trim();
+  const msg = document.getElementById('grupo-create-msg');
+  if (!nombre) { msg.innerHTML = '<span class="text-red-400 text-xs">Ingresá un nombre</span>'; return; }
+  try {
+    const g = await api('POST', '/grupos', { nombre });
+    msg.innerHTML = `<div class="rounded-xl p-3 text-xs mt-1" style="background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.25)">
+      <div class="font-semibold text-emerald-400 mb-1">Grupo creado exitosamente</div>
+      <div class="text-gray-400">Código: <span class="font-mono font-bold text-lg text-white tracking-widest">${g.codigoDeAcceso}</span></div>
+    </div>`;
+    toast('Grupo creado. Código: ' + g.codigoDeAcceso);
+    document.getElementById('grupo-nombre').value = '';
+  } catch(e) { msg.innerHTML = `<span class="text-red-400 text-xs">${e.message}</span>`; }
+}
+
+async function unirseGrupo() {
+  const codigo = document.getElementById('grupo-codigo').value.trim().toUpperCase();
+  const msg = document.getElementById('grupo-join-msg');
+  if (!codigo) { msg.innerHTML = '<span class="text-red-400 text-xs">Ingresá el código</span>'; return; }
+  try {
+    const g = await api('POST', '/grupos/unirse', { codigoDeAcceso: codigo });
+    msg.innerHTML = `<span class="text-emerald-400 text-xs font-medium">Te uniste a "${g.nombre}"</span>`;
+    document.getElementById('grupo-codigo').value = '';
+    loadGrupoRanking(g.id, g.nombre);
+  } catch(e) { msg.innerHTML = `<span class="text-red-400 text-xs">${e.message}</span>`; }
+}
+
+async function loadGrupoRanking(grupoId, nombre) {
+  const sec = document.getElementById('grupo-ranking-section');
+  sec.classList.remove('hidden');
+  document.getElementById('grupo-nombre-display').textContent = nombre;
+  const tbody = document.getElementById('grupo-ranking-body');
+  tbody.innerHTML = `<tr><td colspan="4" class="text-center py-8 text-gray-600"><i class="fas fa-circle-notch spin"></i></td></tr>`;
+  const ranking = await api('GET', `/ranking/grupo/${grupoId}`);
+  const medals = ['🥇','🥈','🥉'];
+  tbody.innerHTML = (ranking||[]).map((r,i) =>
+    `<tr class="rank-row">
+      <td class="py-4 px-5 text-base">${i<3?medals[i]:`<span class="font-mono font-bold text-gray-500">${r.posicion}</span>`}</td>
+      <td class="py-4 px-5 font-semibold text-white text-sm">${r.nombre} ${r.apellido}</td>
+      <td class="py-4 px-5 text-center font-extrabold text-yellow-400 text-xl" style="font-family:'Barlow Condensed',system-ui">${r.puntos}</td>
+      <td class="py-4 px-5 text-center font-semibold text-emerald-400 hidden sm:table-cell">${r.cantidadExactos}</td>
+    </tr>`).join('') || `<tr><td colspan="4" class="text-center py-8 text-gray-600">Sin participantes</td></tr>`;
+}
+
+// ═══════════════════════════════════════════════════
+// ADMIN
+// ═══════════════════════════════════════════════════
+async function loadAdmin() {
+  showAdminSub('equipos');
+  const [equipos, fechas] = await Promise.all([api('GET','/equipos'), api('GET','/fechas')]);
+  allEquipos = equipos || [];
+  allFechas  = fechas  || [];
+  renderEquiposAdmin();
+  renderFechasAdmin();
+  populatePartidoSelects();
+  loadPartidosAdmin();
+}
+
+function renderEquiposAdmin() {
+  document.getElementById('equipos-admin-list').innerHTML = !allEquipos.length
+    ? `<div class="text-center py-8 text-gray-700"><i class="fas fa-shield-alt text-4xl mb-2 block"></i><p class="text-xs">Sin equipos todavía</p></div>`
+    : allEquipos.map(e => {
+        const flag = getFlag(e.nombre);
+        return `<div class="flex items-center justify-between px-4 py-2.5 rounded-xl border border-gray-700/60 group" style="background:var(--surface2)">
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl flex items-center justify-center text-base" style="background:rgba(59,130,246,.12)">${flag}</div>
+            <div>
+              <div class="font-medium text-white text-sm">${e.nombre}</div>
+              <div class="font-mono text-xs text-gray-500">${e.abreviatura}</div>
+            </div>
+          </div>
+          <button onclick="eliminarEquipo(${e.id})" title="Eliminar"
+            class="opacity-0 group-hover:opacity-100 text-red-500 hover:text-red-400 w-8 h-8 flex items-center justify-center rounded-lg transition-all">
+            <i class="fas fa-trash text-xs"></i>
+          </button>
+        </div>`;
+      }).join('');
+}
+
+function renderFechasAdmin() {
+  document.getElementById('fechas-admin-list').innerHTML = !allFechas.length
+    ? `<div class="text-center py-8 text-gray-700"><i class="fas fa-calendar text-4xl mb-2 block"></i><p class="text-xs">Sin jornadas todavía</p></div>`
+    : allFechas.map(f => {
+        const badgeMap = {
+          PROGRAMADA:'sb-azul', EN_JUEGO:'sb-verde', FINALIZADA:'sb-gris', APLAZADA:'sb-naranja'
+        };
+        return `<div class="flex items-center justify-between px-4 py-2.5 rounded-xl border border-gray-700/60" style="background:var(--surface2)">
+          <span class="font-medium text-white text-sm">${f.nombre}</span>
+          <span class="sbadge ${badgeMap[f.estado]||'sb-gris'}">${f.estado}</span>
+        </div>`;
+      }).join('');
+}
+
+function populatePartidoSelects() {
+  const fOpts = allFechas.map(f => `<option value="${f.id}">${f.nombre}</option>`).join('');
+  const eOpts = allEquipos.map(e => `<option value="${e.id}">${e.nombre}</option>`).join('');
+  document.getElementById('partido-admin-fecha').innerHTML     = '<option value="">Seleccionar jornada...</option>' + fOpts;
+  document.getElementById('partido-admin-local').innerHTML     = '<option value="">Equipo local...</option>' + eOpts;
+  document.getElementById('partido-admin-visitante').innerHTML = '<option value="">Equipo visitante...</option>' + eOpts;
+}
+
+async function loadPartidosAdmin() {
+  const partidos = await api('GET', '/partidos');
+  allPartidos = partidos || [];
+  const badgeMap = { POR_JUGARSE:'sb-azul', EN_JUEGO:'sb-verde', FINALIZADO:'sb-gris' };
+  document.getElementById('partidos-admin-list').innerHTML = !allPartidos.length
+    ? `<div class="text-center py-8 text-gray-700"><i class="fas fa-futbol text-4xl mb-2 block"></i><p class="text-xs">Sin partidos todavía</p></div>`
+    : allPartidos.map(p => {
+        const fecha = parseDate(p.fechaHoraInicio).toLocaleString('es-AR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
+        const marcador = p.estado==='FINALIZADO' ? ` · ${p.golesLocal}–${p.golesVisitante}` : '';
+        let actions = '';
+        if (p.estado==='POR_JUGARSE') {
+          actions = `<button onclick="iniciarPartido(${p.id})"
+            class="flex items-center gap-1.5 text-xs bg-emerald-700 hover:bg-emerald-600 text-white px-3 py-1.5 rounded-xl font-semibold transition-all">
+            <i class="fas fa-play"></i>Iniciar
+          </button>`;
+        } else if (p.estado==='EN_JUEGO') {
+          actions = `<button onclick="openResultadoModal(${p.id})"
+            class="flex items-center gap-1.5 text-xs bg-orange-700 hover:bg-orange-600 text-white px-3 py-1.5 rounded-xl font-semibold transition-all">
+            <i class="fas fa-flag-checkered"></i>Resultado
+          </button>`;
+        }
+        return `<div class="flex items-center justify-between px-4 py-3 rounded-xl border border-gray-700/60 gap-3" style="background:var(--surface2)">
+          <div class="min-w-0">
+            <div class="font-semibold text-white text-sm truncate">${p.equipoLocalNombre} vs ${p.equipoVisitanteNombre}</div>
+            <div class="text-xs text-gray-600">${p.fechaNombre} · ${fecha}</div>
+          </div>
+          <div class="flex items-center gap-2 flex-shrink-0">
+            <span class="sbadge ${badgeMap[p.estado]}">${p.estado.replace('_',' ')}${marcador}</span>
+            ${actions}
+          </div>
+        </div>`;
+      }).join('');
+}
+
+async function crearEquipo() {
+  const nombre = document.getElementById('equipo-nombre').value.trim();
+  const abreviatura = document.getElementById('equipo-abreviatura').value.trim().toUpperCase();
+  if (!nombre || !abreviatura) { toast('Completá nombre y abreviatura', 'error'); return; }
+  try {
+    await api('POST', '/equipos', { nombre, abreviatura });
+    toast('Equipo creado: ' + nombre);
+    document.getElementById('equipo-nombre').value = '';
+    document.getElementById('equipo-abreviatura').value = '';
+    allEquipos = await api('GET', '/equipos') || [];
+    renderEquiposAdmin(); populatePartidoSelects();
+  } catch(e) { toast(e.message, 'error'); }
+}
+
+async function eliminarEquipo(id) {
+  if (!confirm('¿Eliminar este equipo?')) return;
+  try {
+    await api('DELETE', `/equipos/${id}`);
+    toast('Equipo eliminado');
+    allEquipos = await api('GET', '/equipos') || [];
+    renderEquiposAdmin(); populatePartidoSelects();
+  } catch(e) { toast(e.message, 'error'); }
+}
+
+async function crearFecha() {
+  const nombre = document.getElementById('fecha-nombre').value.trim();
+  if (!nombre) { toast('Ingresá un nombre para la jornada', 'warn'); return; }
+  try {
+    await api('POST', '/fechas', { nombre });
+    toast('Jornada creada: ' + nombre);
+    document.getElementById('fecha-nombre').value = '';
+    allFechas = await api('GET', '/fechas') || [];
+    renderFechasAdmin(); populatePartidoSelects();
+  } catch(e) { toast(e.message, 'error'); }
+}
+
+async function crearPartidoAdmin() {
+  const fechaId           = parseInt(document.getElementById('partido-admin-fecha').value);
+  const equipoLocalId     = parseInt(document.getElementById('partido-admin-local').value);
+  const equipoVisitanteId = parseInt(document.getElementById('partido-admin-visitante').value);
+  const fechaHoraStr      = document.getElementById('partido-admin-hora').value;
+  if (!fechaId || !equipoLocalId || !equipoVisitanteId || !fechaHoraStr) {
+    toast('Completá todos los campos', 'warn'); return;
+  }
+  const fechaHoraInicio = new Date(fechaHoraStr).toISOString().slice(0, 19);
+  try {
+    await api('POST', '/partidos', { fechaId, equipoLocalId, equipoVisitanteId, fechaHoraInicio });
+    toast('Partido creado');
+    loadPartidosAdmin();
+  } catch(e) { toast(e.message, 'error'); }
+}
+
+async function iniciarPartido(id) {
+  if (!confirm('¿Iniciar el partido? Los pronósticos quedarán bloqueados.')) return;
+  try {
+    await api('PATCH', `/partidos/${id}/iniciar`);
+    toast('Partido iniciado');
+    loadPartidosAdmin();
+    if (!document.getElementById('tab-partidos').classList.contains('hidden')) loadPartidos();
+  } catch(e) { toast(e.message, 'error'); }
+}
+
+// ═══════════════════════════════════════════════════
+// KEYBOARD
+// ═══════════════════════════════════════════════════
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { closePronosticoModal(); closeResultadoModal(); }
+  if (e.key === 'Enter' && !document.getElementById('auth-screen').classList.contains('hidden')) {
+    if (!document.getElementById('form-login').classList.contains('hidden')) login();
+    else register();
+  }
+});
+
+// ═══════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════
+if (token && currentUser) showApp();
+</script>
+</body>
+</html>
