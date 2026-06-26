@@ -7,6 +7,7 @@ import com.example.demo.dtos.UnirseGrupoDTO;
 import com.example.demo.models.Usuario;
 import com.example.demo.services.GrupoService;
 import com.example.demo.services.RankingService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +26,7 @@ public class GrupoController {
 
     @PostMapping
     public ResponseEntity<GrupoResponseDTO> crear(
-            @RequestBody GrupoRequestDTO dto,
+            @Valid @RequestBody GrupoRequestDTO dto,
             @AuthenticationPrincipal Usuario usuario) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(grupoService.crearGrupo(dto, usuario));
@@ -33,7 +34,7 @@ public class GrupoController {
 
     @PostMapping("/unirse")
     public ResponseEntity<GrupoResponseDTO> unirse(
-            @RequestBody UnirseGrupoDTO dto,
+            @Valid @RequestBody UnirseGrupoDTO dto,
             @AuthenticationPrincipal Usuario usuario) {
         return ResponseEntity.ok(grupoService.unirseAGrupo(dto.getCodigoDeAcceso(), usuario));
     }

@@ -5,6 +5,7 @@ import com.example.demo.dtos.PronosticoResponseDTO;
 import com.example.demo.models.Usuario;
 import com.example.demo.models.enums.EstadoPartido;
 import com.example.demo.services.PronosticoService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -23,7 +24,7 @@ public class PronosticoController {
     @PostMapping
     @PreAuthorize("hasRole('JUGADOR')")
     public ResponseEntity<PronosticoResponseDTO> crearOModificar(
-            @RequestBody PronosticoRequestDTO dto,
+            @Valid @RequestBody PronosticoRequestDTO dto,
             @AuthenticationPrincipal Usuario usuario) {
         return ResponseEntity.ok(pronosticoService.crearOModificar(dto, usuario));
     }

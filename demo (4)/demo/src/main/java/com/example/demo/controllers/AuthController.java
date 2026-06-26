@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -24,13 +25,13 @@ public class AuthController {
     private final JwtService jwtService;
 
     @PostMapping(value = "/register", consumes = "application/json")
-    public ResponseEntity<java.util.Map<String, String>> registrar(@RequestBody RegistroUsuarioDTO dto) {
+    public ResponseEntity<java.util.Map<String, String>> registrar(@Valid @RequestBody RegistroUsuarioDTO dto) {
         usuarioService.registrarUsuario(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(java.util.Map.of("message", "Usuario registrado exitosamente"));
     }
 
     @PostMapping(value = "/login", consumes = "application/json")
-    public ResponseEntity<LoginResponseDTO> login(@RequestBody LoginDTO dto) {
+    public ResponseEntity<LoginResponseDTO> login(@Valid @RequestBody LoginDTO dto) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(dto.getEmail(), dto.getContrasena())
         );

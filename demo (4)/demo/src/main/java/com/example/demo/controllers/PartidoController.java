@@ -5,6 +5,7 @@ import com.example.demo.dtos.PartidoRequestDTO;
 import com.example.demo.dtos.PartidoResponseDTO;
 import com.example.demo.dtos.ResultadoDTO;
 import com.example.demo.services.PartidoService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +29,7 @@ public class PartidoController {
 
     @PostMapping
     @PreAuthorize("hasRole('ADMINISTRADOR')")
-    public ResponseEntity<PartidoResponseDTO> crear(@RequestBody PartidoRequestDTO dto) {
+    public ResponseEntity<PartidoResponseDTO> crear(@Valid @RequestBody PartidoRequestDTO dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(partidoService.crearPartido(dto));
     }
 
@@ -36,7 +37,7 @@ public class PartidoController {
     @PreAuthorize("hasRole('ADMINISTRADOR')")
     public ResponseEntity<PartidoResponseDTO> modificar(
             @PathVariable Long id,
-            @RequestBody PartidoRequestDTO dto) {
+            @Valid @RequestBody PartidoRequestDTO dto) {
         return ResponseEntity.ok(partidoService.modificarPartido(id, dto));
     }
 
@@ -44,7 +45,7 @@ public class PartidoController {
     @PreAuthorize("hasRole('ADMINISTRADOR')")
     public ResponseEntity<PartidoResponseDTO> aplazar(
             @PathVariable Long id,
-            @RequestBody AplazarPartidoDTO dto) {
+            @Valid @RequestBody AplazarPartidoDTO dto) {
         return ResponseEntity.ok(partidoService.aplazarPartido(id, dto));
     }
 
@@ -58,7 +59,7 @@ public class PartidoController {
     @PreAuthorize("hasRole('ADMINISTRADOR')")
     public ResponseEntity<PartidoResponseDTO> registrarResultado(
             @PathVariable Long id,
-            @RequestBody ResultadoDTO dto) {
+            @Valid @RequestBody ResultadoDTO dto) {
         return ResponseEntity.ok(partidoService.registrarResultado(id, dto));
     }
 

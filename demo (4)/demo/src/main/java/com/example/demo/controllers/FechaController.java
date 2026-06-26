@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,7 +28,7 @@ public class FechaController {
 
     @PostMapping
     @PreAuthorize("hasRole('ADMINISTRADOR')")
-    public ResponseEntity<FechaResponseDTO> crear(@RequestBody FechaRequestDTO dto) {
+    public ResponseEntity<FechaResponseDTO> crear(@Valid @RequestBody FechaRequestDTO dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(fechaService.crearFecha(dto));
     }
 
@@ -35,7 +36,7 @@ public class FechaController {
     @PreAuthorize("hasRole('ADMINISTRADOR')")
     public ResponseEntity<FechaResponseDTO> modificar(
             @PathVariable Long id,
-            @RequestBody FechaRequestDTO dto) {
+            @Valid @RequestBody FechaRequestDTO dto) {
         return ResponseEntity.ok(fechaService.modificarNombre(id, dto));
     }
 
