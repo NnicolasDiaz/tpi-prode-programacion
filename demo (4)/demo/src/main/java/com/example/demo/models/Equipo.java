@@ -16,8 +16,11 @@ public class Equipo {
     @Column(nullable = false, unique = true)
     private String nombre;
 
-    @Column(nullable = false)
+    @Column
     private String abreviatura;
+
+    @Column(columnDefinition = "TEXT")
+    private String imagenUrl;
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime fechaCreacion;

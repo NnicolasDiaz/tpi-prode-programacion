@@ -27,9 +27,13 @@ public class EquipoService {
         if (equipoRepository.existsByNombre(dto.getNombre())) {
             throw new BusinessException("Ya existe un equipo con el nombre: " + dto.getNombre());
         }
+        String abrev = (dto.getAbreviatura() != null && !dto.getAbreviatura().isBlank())
+                ? dto.getAbreviatura()
+                : "";
         Equipo equipo = Equipo.builder()
                 .nombre(dto.getNombre())
-                .abreviatura(dto.getAbreviatura())
+                .abreviatura(abrev)
+                .imagenUrl(dto.getImagenUrl())
                 .build();
         return toDTO(equipoRepository.save(equipo));
     }
@@ -61,6 +65,6 @@ public class EquipoService {
     }
 
     private EquipoResponseDTO toDTO(Equipo e) {
-        return new EquipoResponseDTO(e.getId(), e.getNombre(), e.getAbreviatura());
+        return new EquipoResponseDTO(e.getId(), e.getNombre(), e.getAbreviatura(), e.getImagenUrl());
     }
 }

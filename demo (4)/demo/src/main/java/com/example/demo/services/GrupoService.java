@@ -68,6 +68,23 @@ public class GrupoService {
                 .orElseThrow(() -> new ResourceNotFoundException("Grupo no encontrado")));
     }
 
+    @Transactional(readOnly = true)
+    public java.util.List<GrupoResponseDTO> listarTodos() {
+        return grupoRepository.findAll().stream()
+                .filter(g -> g.getFechaEliminacion() == null)
+                .map(g -> toDTOPublico(g))
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public java.util.List<GrupoResponseDTO> listarMisGrupos(Usuario usuario) {
+        return grupoRepository.findAll().stream()
+                .filter(g -> g.getFechaEliminacion() == null)
+                .filter(g -> g.getIntegrantes().stream().anyMatch(u -> u.getId().equals(usuario.getId())))
+                .map(this::toDTO)
+                .toList();
+    }
+
     private String generarCodigoUnico() {
         String codigo;
         do {
@@ -82,10 +99,17 @@ public class GrupoService {
 
     private GrupoResponseDTO toDTO(Grupo g) {
         return new GrupoResponseDTO(
-                g.getId(),
-                g.getNombre(),
-                g.getCodigoDeAcceso(),
-                g.getIntegrantes() != null ? g.getIntegrantes().size() : 0
+                g.getId(), g.getNombre(), g.getCodigoDeAcceso(),
+                g.getIntegrantes() != null ? g.getIntegrantes().size() : 0,
+                g.getCreador().getNombre(), g.getCreador().getApellido()
+        );
+    }
+
+    private GrupoResponseDTO toDTOPublico(Grupo g) {
+        return new GrupoResponseDTO(
+                g.getId(), g.getNombre(), null,
+                g.getIntegrantes() != null ? g.getIntegrantes().size() : 0,
+                g.getCreador().getNombre(), g.getCreador().getApellido()
         );
     }
 }

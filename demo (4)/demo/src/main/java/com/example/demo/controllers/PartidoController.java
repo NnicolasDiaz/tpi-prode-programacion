@@ -1,5 +1,6 @@
 package com.example.demo.controllers;
 
+import com.example.demo.dtos.AplazarPartidoDTO;
 import com.example.demo.dtos.PartidoRequestDTO;
 import com.example.demo.dtos.PartidoResponseDTO;
 import com.example.demo.dtos.ResultadoDTO;
@@ -37,6 +38,14 @@ public class PartidoController {
             @PathVariable Long id,
             @RequestBody PartidoRequestDTO dto) {
         return ResponseEntity.ok(partidoService.modificarPartido(id, dto));
+    }
+
+    @PatchMapping("/{id}/aplazar")
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
+    public ResponseEntity<PartidoResponseDTO> aplazar(
+            @PathVariable Long id,
+            @RequestBody AplazarPartidoDTO dto) {
+        return ResponseEntity.ok(partidoService.aplazarPartido(id, dto));
     }
 
     @PatchMapping("/{id}/iniciar")

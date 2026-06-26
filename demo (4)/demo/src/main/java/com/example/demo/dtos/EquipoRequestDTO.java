@@ -6,4 +6,5 @@ import lombok.Data;
 public class EquipoRequestDTO {
     private String nombre;
     private String abreviatura;
+    private String imagenUrl;
 }

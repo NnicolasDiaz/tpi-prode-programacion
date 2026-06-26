@@ -3,51 +3,33 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Prode · World Cup 2026</title>
+  <title>Prode UTN · World Cup 2026</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Barlow+Condensed:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Barlow+Condensed:wght@600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <script>
     tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: {
-            sans: ['Inter', 'system-ui', 'sans-serif'],
-            display: ['"Barlow Condensed"', 'system-ui', 'sans-serif']
-          }
-        }
-      }
+      theme: { extend: { fontFamily: { sans: ['Inter','system-ui','sans-serif'] } } }
     }
   </script>
   <style>
     :root {
-      /* Tier palette */
-      --c-probable: #10b981;
-      --c-probable-bg: rgba(16,185,129,.12);
-      --c-probable-bd: rgba(16,185,129,.3);
-      --c-media: #f59e0b;
-      --c-media-bg: rgba(245,158,11,.12);
-      --c-media-bd: rgba(245,158,11,.3);
-      --c-malcriada: #f43f5e;
-      --c-malcriada-bg: rgba(244,63,94,.12);
-      --c-malcriada-bd: rgba(244,63,94,.3);
-      /* App surface */
-      --bg: #0b1120;
+      --bg:      #0b1120;
       --surface: #111827;
-      --surface2: #1f2937;
-      --border: #2d3748;
-      --border-hover: #4b5563;
-      --text: #f9fafb;
-      --text2: #9ca3af;
-      --text3: #6b7280;
-      --accent: #3b82f6;
+      --surface2:#1f2937;
+      --border:  #2d3748;
+      --border2: #4b5563;
+      --text:    #f9fafb;
+      --text2:   #9ca3af;
+      --text3:   #6b7280;
+      --accent:  #3b82f6;
     }
 
     * { box-sizing: border-box; margin: 0; }
     body { font-family: 'Inter', system-ui, sans-serif; }
 
-    /* ── Auth ───────────────────────────────────── */
+    /* ── Auth ─────────────────────────────────── */
     .auth-bg {
       background: linear-gradient(145deg, #0b1120 0%, #1e3a8a 55%, #1d4ed8 100%);
     }
@@ -57,15 +39,15 @@
       border: 1px solid rgba(255,255,255,.14);
     }
 
-    /* ── App shell ──────────────────────────────── */
+    /* ── App shell ────────────────────────────── */
     #main-app { background: var(--bg); min-height: 100vh; }
 
-    /* ── Animations ─────────────────────────────── */
-    @keyframes fadeUp   { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
-    @keyframes spin     { to{transform:rotate(360deg)} }
-    @keyframes pulse    { 0%,100%{opacity:1} 50%{opacity:.35} }
-    @keyframes shimmer  { from{background-position:-200% 0} to{background-position:200% 0} }
-    @keyframes barGrow  { from{width:0%} to{width:var(--bar-w)} }
+    /* ── Animations ───────────────────────────── */
+    @keyframes fadeUp  { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+    @keyframes spin    { to{transform:rotate(360deg)} }
+    @keyframes pulse   { 0%,100%{opacity:1} 50%{opacity:.35} }
+    @keyframes shimmer { from{background-position:-200% 0} to{background-position:200% 0} }
+    @keyframes barGrow { from{width:0%} to{width:var(--bar-w)} }
 
     .fade-up   { animation: fadeUp .3s ease both; }
     .spin      { animation: spin .7s linear infinite; display:inline-block; }
@@ -78,17 +60,24 @@
       border-radius: 8px;
     }
 
-    /* ── Navbar ─────────────────────────────────── */
+    /* ── Navbar ───────────────────────────────── */
     #app-header {
       background: linear-gradient(90deg, #0b1837 0%, #0f2251 100%);
       border-bottom: 1px solid rgba(59,130,246,.2);
     }
-    .nav-active {
-      background: rgba(59,130,246,.18) !important;
-      color: #93c5fd !important;
+    .nav-active { background: rgba(59,130,246,.18) !important; color: #93c5fd !important; }
+
+    /* ── WC pill ──────────────────────────────── */
+    .wc-pill {
+      display:inline-flex; align-items:center;
+      background: linear-gradient(90deg,rgba(59,130,246,.25),rgba(99,102,241,.25));
+      border: 1px solid rgba(99,102,241,.4);
+      border-radius: 99px; padding: 2px 8px;
+      font-size:.6rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase;
+      color: #a5b4fc;
     }
 
-    /* ── Match card ─────────────────────────────── */
+    /* ── Match card ───────────────────────────── */
     .partido-card {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -96,53 +85,12 @@
       transition: border-color .15s, box-shadow .15s, transform .15s;
     }
     .partido-card:hover {
-      border-color: var(--border-hover);
+      border-color: var(--border2);
       box-shadow: 0 8px 36px rgba(0,0,0,.45);
       transform: translateY(-1px);
     }
-    .partido-card.t-probable  { border-left: 3px solid var(--c-probable); }
-    .partido-card.t-media     { border-left: 3px solid var(--c-media); }
-    .partido-card.t-malcriada { border-left: 3px solid var(--c-malcriada); }
 
-    /* ── Odds chips ─────────────────────────────── */
-    .odds-wrap { display:flex; gap:8px; }
-    .odds-chip {
-      flex:1; background: #0b1120; border: 1px solid var(--border);
-      border-radius: 10px; padding: 10px 6px; text-align:center;
-      transition: border-color .15s, background .15s; cursor:default;
-    }
-    .odds-chip:hover { border-color: var(--accent); background: rgba(59,130,246,.1); }
-    .odds-chip.highlight { border-color: rgba(16,185,129,.5); background: rgba(16,185,129,.08); }
-    .odds-val  { font-family:'Barlow Condensed',system-ui; font-size:1.5rem; font-weight:800; line-height:1; color: var(--text); }
-    .odds-lbl  { font-size:.6rem; font-weight:600; text-transform:uppercase; letter-spacing:.07em; color: var(--text3); margin-top:3px; }
-
-    /* ── Probability bar ────────────────────────── */
-    .prob-track {
-      height: 7px; border-radius: 99px; background: #0b1120;
-      display:flex; overflow:hidden; gap:2px;
-    }
-    .prob-seg {
-      height:100%; border-radius:99px;
-      width: var(--bar-w);
-      animation: barGrow .7s cubic-bezier(.34,1.1,.64,1) both;
-    }
-    .prob-local    { background: linear-gradient(90deg,#3b82f6,#60a5fa); }
-    .prob-empate   { background: #374151; }
-    .prob-visitante{ background: linear-gradient(90deg,#f59e0b,#fb923c); }
-
-    /* ── Tier badge ─────────────────────────────── */
-    .tier-badge {
-      display:inline-flex; align-items:center; gap:5px;
-      font-size:.6rem; font-weight:700; text-transform:uppercase; letter-spacing:.08em;
-      padding: 3px 9px; border-radius:99px;
-      transition: all 0.2s ease;
-    }
-    .tier-badge:hover { filter: brightness(1.15); transform: scale(1.04); }
-    .tb-probable  { background:var(--c-probable-bg);  color:var(--c-probable);  border:1px solid var(--c-probable-bd); }
-    .tb-media     { background:var(--c-media-bg);     color:var(--c-media);     border:1px solid var(--c-media-bd); }
-    .tb-malcriada { background:var(--c-malcriada-bg); color:var(--c-malcriada); border:1px solid var(--c-malcriada-bd); }
-
-    /* ── Status badge ───────────────────────────── */
+    /* ── Status badge ─────────────────────────── */
     .sbadge {
       display:inline-flex; align-items:center; gap:4px;
       font-size:.65rem; font-weight:600; padding:3px 9px; border-radius:99px;
@@ -152,15 +100,15 @@
     .sb-gris    { background:rgba(148,163,184,.1);  color:#94a3b8;  border:1px solid rgba(148,163,184,.2); }
     .sb-naranja { background:rgba(251,146,60,.15);  color:#fb923c;  border:1px solid rgba(251,146,60,.3); }
 
-    /* ── Score display ──────────────────────────── */
+    /* ── Score display ────────────────────────── */
     .score-big {
       font-family:'Barlow Condensed',system-ui;
       font-size:2.4rem; font-weight:900; color:var(--text);
       letter-spacing:-0.02em; line-height:1;
-      text-shadow: 0 0 20px rgba(59,130,246,0.3);
+      text-shadow: 0 0 20px rgba(59,130,246,.25);
     }
 
-    /* ── Score input (modal) ────────────────────── */
+    /* ── Score input (modal) ──────────────────── */
     .score-input {
       width:72px; text-align:center;
       font-family:'Barlow Condensed',system-ui;
@@ -171,7 +119,17 @@
     }
     .score-input:focus { border-color:#3b82f6; }
 
-    /* ── Admin ──────────────────────────────────── */
+    /* ── Pronóstico result badge ──────────────── */
+    .pron-badge {
+      display:inline-flex; align-items:center; gap:5px;
+      font-size:.7rem; font-weight:700; text-transform:uppercase; letter-spacing:.06em;
+      padding: 5px 12px; border-radius:99px;
+    }
+    .pb-exacto    { background:rgba(16,185,129,.15); color:#34d399; border:1px solid rgba(16,185,129,.35); }
+    .pb-tendencia { background:rgba(245,158,11,.15); color:#fbbf24; border:1px solid rgba(245,158,11,.35); }
+    .pb-fallo     { background:rgba(239,68,68,.12);  color:#f87171; border:1px solid rgba(239,68,68,.3); }
+
+    /* ── Admin inputs ─────────────────────────── */
     .admin-input {
       width:100%; border:1px solid var(--border); border-radius:12px;
       padding: 10px 14px; font-size:.875rem;
@@ -184,102 +142,56 @@
 
     .sub-active { background: var(--surface2) !important; color: #93c5fd !important; font-weight:600; }
 
-    /* ── Ranking table ──────────────────────────── */
+    /* ── Ranking ──────────────────────────────── */
     .rank-row { border-bottom: 1px solid var(--border); transition:background .1s; }
     .rank-row:last-child { border-bottom:0; }
     .rank-row:hover { background: var(--surface2); }
-
-    /* ── Toast ──────────────────────────────────── */
-    #toast { transition:all .3s cubic-bezier(.34,1.56,.64,1); }
-    #toast.hidden { transform:translateY(80px); opacity:0; }
-
-    /* ── Thin scrollbar ─────────────────────────── */
-    .thin-scroll::-webkit-scrollbar { width:4px; }
-    .thin-scroll::-webkit-scrollbar-track { background:transparent; }
-    .thin-scroll::-webkit-scrollbar-thumb { background:var(--border); border-radius:4px; }
-
-    /* ── Analysis cards ─────────────────────────── */
-    .tier-section-header {
-      display:flex; align-items:center; gap:12px; margin-bottom:16px;
-    }
-    .tier-section-line { flex:1; height:1px; }
-    .analysis-rec {
-      display:flex; align-items:center; gap:8px;
-      background: rgba(59,130,246,.07);
-      border: 1px solid rgba(59,130,246,.18);
-      border-left: 3px solid rgba(59,130,246,0.5);
-      border-radius: 10px; padding: 10px 14px; margin-top:12px;
+    .rank-bar-wrap { margin-top:4px; height:4px; border-radius:99px; background:rgba(255,255,255,.06); overflow:hidden; }
+    .rank-bar-fill {
+      height:100%; border-radius:99px;
+      background: linear-gradient(90deg,#f59e0b,#fbbf24);
+      width: var(--bar-w);
+      animation: barGrow .6s cubic-bezier(.34,1.1,.64,1) both;
     }
 
-    /* ── Grouped fecha header ───────────────────── */
-    .fecha-header {
-      display:flex; align-items:center; gap:10px; margin-bottom:14px;
-    }
-    .fecha-bar { width:3px; height:22px; border-radius:99px; background:var(--accent); }
-
-    /* ── WC pill badge ──────────────────────────── */
-    .wc-pill {
-      display:inline-flex; align-items:center; gap:4px;
-      background: linear-gradient(90deg,rgba(59,130,246,.25),rgba(99,102,241,.25));
-      border: 1px solid rgba(99,102,241,.4);
-      border-radius: 99px; padding: 2px 8px;
-      font-size:.6rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase;
-      color: #a5b4fc;
-    }
-
-    /* ── Hero stats banner ──────────────────────── */
+    /* ── Hero banner ──────────────────────────── */
     .hero-banner {
       background: linear-gradient(135deg, #0d1b3e 0%, #0b1837 60%, #0f2050 100%);
       border: 1px solid rgba(59,130,246,.2);
       border-radius: 16px; padding: 16px 20px; margin-bottom: 20px;
-      display: flex; align-items: center; gap: 0;
+      display:flex; align-items:center;
     }
-    .hero-stat {
-      flex: 1; text-align: center; padding: 0 8px;
-    }
-    .hero-stat + .hero-stat {
-      border-left: 1px solid rgba(59,130,246,.15);
-    }
+    .hero-stat { flex:1; text-align:center; padding:0 8px; }
+    .hero-stat + .hero-stat { border-left:1px solid rgba(59,130,246,.15); }
     .hero-stat-val {
       font-family:'Barlow Condensed',system-ui;
-      font-size: 2rem; font-weight: 900; line-height: 1;
-      color: #f9fafb;
+      font-size:2rem; font-weight:900; line-height:1; color:#f9fafb;
     }
-    .hero-stat-lbl {
-      font-size: .65rem; font-weight: 600; text-transform: uppercase;
-      letter-spacing: .07em; color: #6b7280; margin-top: 3px;
-    }
-    .hero-stat-icon { font-size: .75rem; margin-bottom: 4px; }
+    .hero-stat-lbl { font-size:.65rem; font-weight:600; text-transform:uppercase; letter-spacing:.07em; color:#6b7280; margin-top:3px; }
 
-    /* ── Prono result badge (large) ─────────────── */
-    .pron-result-badge {
-      display: flex; flex-direction: column; align-items: center; gap: 6px;
-      padding: 12px; border-radius: 14px; text-align: center;
-    }
-    .pron-result-badge .badge-icon { font-size: 1.5rem; }
-    .pron-result-badge .badge-score {
-      font-family:'Barlow Condensed',system-ui;
-      font-size: 1.4rem; font-weight: 800; letter-spacing: -.01em;
-    }
-    .pron-result-badge .badge-label {
-      font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em;
-    }
+    /* ── Fecha header ─────────────────────────── */
+    .fecha-header { display:flex; align-items:center; gap:10px; margin-bottom:14px; }
+    .fecha-bar    { width:3px; height:22px; border-radius:99px; background:var(--accent); flex-shrink:0; }
 
-    /* ── Ranking bar ────────────────────────────── */
-    .rank-bar-wrap { margin-top: 4px; height: 4px; border-radius: 99px; background: rgba(255,255,255,.06); overflow:hidden; }
-    .rank-bar-fill { height: 100%; border-radius: 99px; background: linear-gradient(90deg,#f59e0b,#fbbf24); transition: width .6s cubic-bezier(.34,1.1,.64,1); }
+    /* ── Toast ────────────────────────────────── */
+    #toast { transition:all .3s cubic-bezier(.34,1.56,.64,1); }
+    #toast.hidden { transform:translateY(80px); opacity:0; }
 
-    /* ── Responsive ─────────────────────────────── */
+    /* ── Thin scrollbar ───────────────────────── */
+    .thin-scroll::-webkit-scrollbar { width:4px; }
+    .thin-scroll::-webkit-scrollbar-track { background:transparent; }
+    .thin-scroll::-webkit-scrollbar-thumb { background:var(--border); border-radius:4px; }
+
+    /* ── Responsive ───────────────────────────── */
     @media (max-width:640px) {
       .score-big { font-size:2rem; }
-      .odds-val  { font-size:1.2rem; }
       .team-name { font-size:.9rem; }
     }
   </style>
 </head>
 <body class="min-h-screen">
 
-<!-- ═══════════════ LOGIN / REGISTRO ══════════════════ -->
+<!-- ═══════════ LOGIN / REGISTRO ════════════════════ -->
 <div id="auth-screen" class="auth-bg min-h-screen flex items-center justify-center p-4">
   <div class="absolute inset-0 overflow-hidden pointer-events-none">
     <div class="absolute -top-24 -left-24 w-96 h-96 bg-blue-500 opacity-5 rounded-full blur-3xl"></div>
@@ -287,7 +199,6 @@
   </div>
 
   <div class="relative w-full max-w-md">
-    <!-- Logo -->
     <div class="text-center mb-8">
       <div class="inline-flex items-center justify-center w-20 h-20 glass rounded-3xl mb-4">
         <span class="text-4xl">⚽</span>
@@ -296,7 +207,6 @@
       <p class="text-blue-300 text-sm mt-1 font-medium tracking-wide">FRVM · Programación 4 · World Cup 2026</p>
     </div>
 
-    <!-- Card -->
     <div class="bg-white rounded-3xl shadow-2xl overflow-hidden">
       <div class="flex border-b border-slate-100">
         <button id="tab-login-btn" onclick="showAuthTab('login')"
@@ -335,11 +245,6 @@
             class="w-full bg-blue-700 hover:bg-blue-800 text-white font-semibold py-3 rounded-xl text-sm transition-all shadow-md">
             <i class="fas fa-sign-in-alt mr-2"></i>Ingresar
           </button>
-        </div>
-        <div class="mt-5 p-3 bg-slate-50 rounded-xl border border-slate-100">
-          <p class="text-xs text-slate-400 text-center">
-            <i class="fas fa-key mr-1"></i>Demo admin: <span class="text-slate-600 font-semibold">admin@prode.com</span> / <span class="text-slate-600 font-semibold">admin123</span>
-          </p>
         </div>
       </div>
 
@@ -390,7 +295,7 @@
   </div>
 </div>
 
-<!-- ═══════════════ APP PRINCIPAL ═══════════════════════ -->
+<!-- ═══════════ APP PRINCIPAL ════════════════════════ -->
 <div id="main-app" class="hidden flex-col">
 
   <!-- NAVBAR -->
@@ -414,10 +319,6 @@
           <button onclick="showTab('partidos')" data-tab="partidos"
             class="nav-btn flex items-center gap-2 px-3.5 py-2 rounded-xl text-sm font-medium text-blue-200 hover:bg-white/10 transition-all">
             <i class="fas fa-calendar-alt text-xs"></i><span class="hidden sm:inline">Partidos</span>
-          </button>
-          <button onclick="showTab('analisis')" data-tab="analisis"
-            class="nav-btn flex items-center gap-2 px-3.5 py-2 rounded-xl text-sm font-medium text-blue-200 hover:bg-white/10 transition-all">
-            <i class="fas fa-chart-bar text-xs"></i><span class="hidden sm:inline">Análisis</span>
           </button>
           <button onclick="showTab('ranking')" data-tab="ranking"
             class="nav-btn flex items-center gap-2 px-3.5 py-2 rounded-xl text-sm font-medium text-blue-200 hover:bg-white/10 transition-all">
@@ -451,7 +352,7 @@
   <!-- CONTENT -->
   <main class="flex-1 max-w-6xl mx-auto w-full px-4 py-6">
 
-    <!-- ══ TAB PARTIDOS ══════════════════════════════ -->
+    <!-- ══ TAB PARTIDOS ════════════════════════════ -->
     <div id="tab-partidos" class="tab-content">
       <div class="flex flex-wrap items-end justify-between gap-3 mb-6">
         <div>
@@ -476,42 +377,7 @@
       <div id="partidos-container"></div>
     </div>
 
-    <!-- ══ TAB ANÁLISIS ══════════════════════════════ -->
-    <div id="tab-analisis" class="tab-content hidden">
-      <div class="mb-6">
-        <h2 class="text-2xl font-bold text-white">Análisis de Pronósticos</h2>
-        <p class="text-gray-400 text-sm mt-0.5">Clasificación de partidos por nivel de riesgo</p>
-      </div>
-
-      <!-- Tier legend -->
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-8">
-        <div class="rounded-2xl p-4" style="background:var(--c-probable-bg);border:1px solid var(--c-probable-bd)">
-          <div class="flex items-center gap-2 mb-2">
-            <i class="fas fa-shield-alt text-sm" style="color:var(--c-probable)"></i>
-            <span class="font-bold text-sm" style="color:var(--c-probable)">La Probable</span>
-          </div>
-          <p class="text-xs text-gray-400 leading-relaxed">Favorito claro &gt;62% de probabilidad. Bajo riesgo, cuota accesible. Ideal para apuestas conservadoras.</p>
-        </div>
-        <div class="rounded-2xl p-4" style="background:var(--c-media-bg);border:1px solid var(--c-media-bd)">
-          <div class="flex items-center gap-2 mb-2">
-            <i class="fas fa-chart-line text-sm" style="color:var(--c-media)"></i>
-            <span class="font-bold text-sm" style="color:var(--c-media)">La Media</span>
-          </div>
-          <p class="text-xs text-gray-400 leading-relaxed">Partido equilibrado. Favorito entre 48–62%. Riesgo moderado con cuota interesante.</p>
-        </div>
-        <div class="rounded-2xl p-4" style="background:var(--c-malcriada-bg);border:1px solid var(--c-malcriada-bd)">
-          <div class="flex items-center gap-2 mb-2">
-            <i class="fas fa-fire text-sm" style="color:var(--c-malcriada)"></i>
-            <span class="font-bold text-sm" style="color:var(--c-malcriada)">La Malcriada</span>
-          </div>
-          <p class="text-xs text-gray-400 leading-relaxed">Resultado impredecible, ningún equipo supera 48%. Alto riesgo, alta recompensa potencial.</p>
-        </div>
-      </div>
-
-      <div id="analisis-container"></div>
-    </div>
-
-    <!-- ══ TAB RANKING ══════════════════════════════ -->
+    <!-- ══ TAB RANKING ════════════════════════════ -->
     <div id="tab-ranking" class="tab-content hidden">
       <div class="mb-6">
         <h2 class="text-2xl font-bold text-white">Tabla de Posiciones</h2>
@@ -523,7 +389,7 @@
             <tr style="background:#0b1837;border-bottom:1px solid rgba(59,130,246,.2)">
               <th class="py-3.5 px-5 text-left text-xs font-semibold uppercase tracking-wider text-gray-400 w-16">#</th>
               <th class="py-3.5 px-5 text-left text-xs font-semibold uppercase tracking-wider text-gray-400">Jugador</th>
-              <th class="py-3.5 px-5 text-center text-xs font-semibold uppercase tracking-wider text-yellow-400 w-28">
+              <th class="py-3.5 px-5 text-center text-xs font-semibold uppercase tracking-wider text-yellow-400 w-36">
                 <i class="fas fa-star mr-1"></i>Puntos
               </th>
               <th class="py-3.5 px-5 text-center text-xs font-semibold uppercase tracking-wider text-emerald-400 w-28 hidden sm:table-cell">
@@ -544,55 +410,94 @@
       </div>
     </div>
 
-    <!-- ══ TAB GRUPOS ══════════════════════════════ -->
+    <!-- ══ TAB GRUPOS ════════════════════════════ -->
     <div id="tab-grupos" class="tab-content hidden">
-      <div class="mb-6">
-        <h2 class="text-2xl font-bold text-white">Grupos Privados</h2>
-        <p class="text-gray-400 text-sm mt-0.5">Compará tu rendimiento con amigos</p>
-      </div>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-        <div class="rounded-2xl border border-gray-700/60 p-6" style="background:var(--surface)">
-          <div class="flex items-center gap-3 mb-4">
-            <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background:rgba(16,185,129,.15)">
-              <i class="fas fa-plus" style="color:var(--c-probable)"></i>
-            </div>
-            <div>
-              <div class="font-semibold text-white text-sm">Crear Grupo</div>
-              <div class="text-xs text-gray-500">Compartí el código con tus amigos</div>
-            </div>
-          </div>
-          <input id="grupo-nombre" type="text" placeholder="Nombre del grupo (ej: Los pibes)" class="admin-input mb-3">
-          <button onclick="crearGrupo()"
-            class="w-full bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold py-2.5 rounded-xl transition-all">
-            Crear Grupo
-          </button>
-          <div id="grupo-create-msg" class="mt-3 text-sm"></div>
+      <div class="flex flex-wrap items-end justify-between gap-3 mb-6">
+        <div>
+          <h2 class="text-2xl font-bold text-white">Grupos</h2>
+          <p class="text-gray-400 text-sm mt-0.5">Compará tu rendimiento con tus compañeros</p>
         </div>
-
-        <div class="rounded-2xl border border-gray-700/60 p-6" style="background:var(--surface)">
-          <div class="flex items-center gap-3 mb-4">
-            <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background:rgba(59,130,246,.15)">
-              <i class="fas fa-link text-blue-400"></i>
-            </div>
-            <div>
-              <div class="font-semibold text-white text-sm">Unirse a Grupo</div>
-              <div class="text-xs text-gray-500">Ingresá el código que te pasaron</div>
-            </div>
-          </div>
-          <input id="grupo-codigo" type="text" placeholder="Código (ej: AB12CD34)" style="text-transform:uppercase"
-            class="admin-input mb-3 font-mono tracking-widest">
-          <button onclick="unirseGrupo()"
-            class="w-full bg-blue-700 hover:bg-blue-800 text-white text-sm font-semibold py-2.5 rounded-xl transition-all">
-            Unirse
-          </button>
-          <div id="grupo-join-msg" class="mt-3 text-sm"></div>
-        </div>
+        <button onclick="showGruposSubTab('crear')" id="btn-crear-grupo"
+          class="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold px-4 py-2.5 rounded-xl transition-all">
+          <i class="fas fa-plus"></i>Crear grupo
+        </button>
       </div>
 
-      <div id="grupo-ranking-section" class="hidden fade-up">
-        <div class="flex items-center gap-2 mb-4">
-          <div class="w-1.5 h-6 bg-blue-500 rounded-full"></div>
-          <h3 class="font-bold text-white">Ranking: <span id="grupo-nombre-display" class="text-blue-400"></span></h3>
+      <!-- SubTab crear/unirse (colapsable) -->
+      <div id="grupo-acciones" class="hidden mb-6 fade-up">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="rounded-2xl border border-gray-700/60 p-5" style="background:var(--surface)">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="w-9 h-9 rounded-xl flex items-center justify-center bg-emerald-500/10 flex-shrink-0">
+                <i class="fas fa-plus text-emerald-400 text-sm"></i>
+              </div>
+              <div>
+                <div class="font-semibold text-white text-sm">Crear Grupo</div>
+                <div class="text-xs text-gray-500">Te damos un código para compartir</div>
+              </div>
+            </div>
+            <input id="grupo-nombre" type="text" placeholder="Nombre del grupo (ej: Los pibes)" class="admin-input mb-3">
+            <button onclick="crearGrupo()"
+              class="w-full bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold py-2.5 rounded-xl transition-all">
+              Crear Grupo
+            </button>
+            <div id="grupo-create-msg" class="mt-3 text-sm"></div>
+          </div>
+          <div class="rounded-2xl border border-gray-700/60 p-5" style="background:var(--surface)">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="w-9 h-9 rounded-xl flex items-center justify-center bg-blue-500/10 flex-shrink-0">
+                <i class="fas fa-key text-blue-400 text-sm"></i>
+              </div>
+              <div>
+                <div class="font-semibold text-white text-sm">Unirse con Código</div>
+                <div class="text-xs text-gray-500">Ingresá el código que te pasaron</div>
+              </div>
+            </div>
+            <input id="grupo-codigo" type="text" placeholder="Código (ej: AB12CD34)" style="text-transform:uppercase"
+              class="admin-input mb-3 font-mono tracking-widest">
+            <button onclick="unirseGrupo()"
+              class="w-full bg-blue-700 hover:bg-blue-800 text-white text-sm font-semibold py-2.5 rounded-xl transition-all">
+              Unirse
+            </button>
+            <div id="grupo-join-msg" class="mt-3 text-sm"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mis grupos -->
+      <div class="mb-6" id="mis-grupos-section">
+        <div class="flex items-center gap-2 mb-3">
+          <div class="fecha-bar"></div>
+          <h3 class="font-bold text-white text-sm uppercase tracking-wide">Mis Grupos</h3>
+        </div>
+        <div id="mis-grupos-list"></div>
+      </div>
+
+      <!-- Todos los grupos -->
+      <div>
+        <div class="flex items-center justify-between mb-3">
+          <div class="flex items-center gap-2">
+            <div class="w-3px h-22px" style="width:3px;height:22px;background:#4b5563;border-radius:99px;flex-shrink:0"></div>
+            <h3 class="font-bold text-white text-sm uppercase tracking-wide" style="color:#9ca3af">Todos los Grupos</h3>
+          </div>
+          <button onclick="loadGrupos()" class="text-xs text-gray-500 hover:text-blue-400 font-medium">
+            <i class="fas fa-sync-alt mr-1"></i>Actualizar
+          </button>
+        </div>
+        <div id="todos-grupos-list"></div>
+      </div>
+
+      <!-- Ranking del grupo seleccionado -->
+      <div id="grupo-ranking-section" class="hidden mt-6 fade-up">
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center gap-2">
+            <div class="fecha-bar"></div>
+            <h3 class="font-bold text-white">Ranking: <span id="grupo-nombre-display" class="text-blue-400"></span></h3>
+          </div>
+          <button onclick="document.getElementById('grupo-ranking-section').classList.add('hidden')"
+            class="text-xs text-gray-600 hover:text-gray-400 font-medium">
+            <i class="fas fa-times mr-1"></i>Cerrar
+          </button>
         </div>
         <div class="rounded-2xl overflow-hidden border border-gray-700/60" style="background:var(--surface)">
           <table class="w-full">
@@ -608,9 +513,30 @@
           </table>
         </div>
       </div>
+
+      <!-- Modal código de acceso -->
+      <div id="modal-codigo-grupo" class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 hidden p-4"
+        onclick="if(event.target.id==='modal-codigo-grupo') cerrarModalCodigo()">
+        <div class="w-full max-w-xs rounded-3xl shadow-2xl p-6 border border-gray-700" style="background:#111827">
+          <div class="text-center mb-5">
+            <div class="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-3" style="background:rgba(59,130,246,.1)">
+              <i class="fas fa-lock text-blue-400 text-xl"></i>
+            </div>
+            <h3 class="font-bold text-white text-lg">Acceso con Código</h3>
+            <p id="modal-codigo-grupo-nombre" class="text-xs mt-1" style="color:#6b7280"></p>
+          </div>
+          <input id="modal-codigo-input" type="text" placeholder="Ingresá el código" style="text-transform:uppercase"
+            class="admin-input mb-3 font-mono tracking-widest text-center text-lg">
+          <div id="modal-codigo-error" class="hidden text-red-400 text-xs px-3 py-2.5 rounded-xl mb-3 text-center" style="background:rgba(239,68,68,.12)"></div>
+          <button onclick="submitCodigoGrupo()"
+            class="w-full bg-blue-700 hover:bg-blue-800 text-white font-bold py-3 rounded-2xl text-sm transition-all">
+            Ver Ranking
+          </button>
+        </div>
+      </div>
     </div>
 
-    <!-- ══ TAB ADMIN ══════════════════════════════ -->
+    <!-- ══ TAB ADMIN ════════════════════════════ -->
     <div id="tab-admin" class="tab-content hidden">
       <div class="mb-6">
         <h2 class="text-2xl font-bold text-white">Panel de Administración</h2>
@@ -640,9 +566,19 @@
               <i class="fas fa-plus-circle mr-2 text-blue-400"></i>Nuevo Equipo
             </h3>
             <div class="space-y-3">
-              <input id="equipo-nombre" type="text" placeholder="Nombre completo (ej: Argentina)" class="admin-input">
-              <input id="equipo-abreviatura" type="text" placeholder="Abreviatura (ej: ARG)" maxlength="5" style="text-transform:uppercase"
-                class="admin-input font-mono tracking-widest">
+              <input id="equipo-nombre" type="text" placeholder="Nombre (ej: Argentina)" class="admin-input">
+              <input id="equipo-abreviatura" type="text" placeholder="Abreviatura (ej: ARG) — opcional" maxlength="5"
+                style="text-transform:uppercase" class="admin-input font-mono tracking-widest">
+              <!-- Imagen del club -->
+              <div>
+                <label class="block text-xs font-medium mb-2" style="color:#6b7280">Link del escudo <span style="color:#4b5563">(opcional)</span></label>
+                <div class="flex items-center gap-2">
+                  <div id="equipo-imagen-preview" class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 overflow-hidden" style="background:#1f2937;border:1px solid #2d3748">
+                    <i class="fas fa-image" style="color:#4b5563"></i>
+                  </div>
+                  <input id="equipo-imagen" type="url" placeholder="https://..." class="admin-input" oninput="previewEquipoImagen(this.value)">
+                </div>
+              </div>
               <button onclick="crearEquipo()"
                 class="w-full bg-blue-700 hover:bg-blue-800 text-white text-sm font-semibold py-2.5 rounded-xl transition-all">
                 Crear Equipo
@@ -690,10 +626,10 @@
               <i class="fas fa-plus-circle mr-2 text-blue-400"></i>Nuevo Partido
             </h3>
             <div class="space-y-3">
-              <select id="partido-admin-fecha" class="admin-input admin-select"><option value="">Seleccionar jornada...</option></select>
-              <select id="partido-admin-local" class="admin-input admin-select"><option value="">Equipo local...</option></select>
+              <select id="partido-admin-fecha"     class="admin-input admin-select"><option value="">Seleccionar jornada...</option></select>
+              <select id="partido-admin-local"     class="admin-input admin-select"><option value="">Equipo local...</option></select>
               <select id="partido-admin-visitante" class="admin-input admin-select"><option value="">Equipo visitante...</option></select>
-              <input id="partido-admin-hora" type="datetime-local" class="admin-input">
+              <input  id="partido-admin-hora" type="datetime-local" class="admin-input">
               <button onclick="crearPartidoAdmin()"
                 class="w-full bg-blue-700 hover:bg-blue-800 text-white text-sm font-semibold py-2.5 rounded-xl transition-all">
                 Crear Partido
@@ -718,41 +654,41 @@
   </main>
 </div>
 
-<!-- ════════ MODAL: PRONÓSTICO ══════════════════════════ -->
+<!-- ════ MODAL: PRONÓSTICO ══════════════════════════ -->
 <div id="modal-pronostico"
   class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-end sm:items-center justify-center z-50 hidden p-0 sm:p-4"
   onclick="closeIfOutside(event,'modal-pronostico',closePronosticoModal)">
-  <div class="bg-white w-full sm:max-w-sm rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden"
-    onclick="event.stopPropagation()">
+  <div class="w-full sm:max-w-sm rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden border border-gray-700"
+    style="background:#111827" onclick="event.stopPropagation()">
     <div class="sm:hidden flex justify-center pt-3 pb-1">
-      <div class="w-10 h-1 bg-slate-200 rounded-full"></div>
+      <div class="w-10 h-1 rounded-full" style="background:#374151"></div>
     </div>
-    <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100">
+    <div class="flex items-center justify-between px-6 py-4" style="border-bottom:1px solid #1f2937">
       <div>
-        <h3 class="font-bold text-slate-800">Hacer Pronóstico</h3>
-        <p id="modal-partido-label" class="text-xs text-slate-400 mt-0.5"></p>
+        <h3 class="font-bold text-white">Hacer Pronóstico</h3>
+        <p id="modal-partido-label" class="text-xs mt-0.5" style="color:#6b7280"></p>
       </div>
-      <button onclick="closePronosticoModal()" class="w-9 h-9 rounded-xl flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-all">
+      <button onclick="closePronosticoModal()" class="w-9 h-9 rounded-xl flex items-center justify-center transition-all" style="color:#6b7280" onmouseover="this.style.background='#1f2937';this.style.color='#f9fafb'" onmouseout="this.style.background='transparent';this.style.color='#6b7280'">
         <i class="fas fa-times"></i>
       </button>
     </div>
     <div class="p-6">
       <div class="flex items-center gap-4 mb-6">
         <div class="flex-1 flex flex-col items-center gap-2">
-          <span id="modal-local" class="font-semibold text-slate-700 text-sm text-center leading-tight"></span>
-          <span class="text-xs text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">Local</span>
+          <span id="modal-local" class="font-semibold text-white text-sm text-center leading-tight"></span>
+          <span class="text-xs px-2 py-0.5 rounded-full font-medium" style="color:#9ca3af;background:#1f2937">Local</span>
           <input id="modal-goles-local" type="number" min="0" max="20" value="0" class="score-input">
         </div>
-        <div class="flex flex-col items-center gap-1">
-          <span class="text-slate-300 font-bold text-2xl">vs</span>
+        <div class="flex flex-col items-center">
+          <span class="font-bold text-2xl" style="color:#4b5563">vs</span>
         </div>
         <div class="flex-1 flex flex-col items-center gap-2">
-          <span id="modal-visitante" class="font-semibold text-slate-700 text-sm text-center leading-tight"></span>
-          <span class="text-xs text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">Visitante</span>
+          <span id="modal-visitante" class="font-semibold text-white text-sm text-center leading-tight"></span>
+          <span class="text-xs px-2 py-0.5 rounded-full font-medium" style="color:#9ca3af;background:#1f2937">Visitante</span>
           <input id="modal-goles-visitante" type="number" min="0" max="20" value="0" class="score-input">
         </div>
       </div>
-      <div id="modal-pronostico-error" class="hidden text-center text-red-600 text-xs bg-red-50 px-3 py-2.5 rounded-xl mb-4">
+      <div id="modal-pronostico-error" class="hidden text-center text-red-400 text-xs px-3 py-2.5 rounded-xl mb-4" style="background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.25)">
         <i class="fas fa-exclamation-circle mr-1"></i><span id="modal-pron-err-msg"></span>
       </div>
       <button onclick="submitPronostico()"
@@ -763,46 +699,79 @@
   </div>
 </div>
 
-<!-- ════════ MODAL: RESULTADO ══════════════════════════ -->
+<!-- ════ MODAL: RESULTADO ══════════════════════════ -->
 <div id="modal-resultado"
   class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-end sm:items-center justify-center z-50 hidden p-0 sm:p-4"
   onclick="closeIfOutside(event,'modal-resultado',closeResultadoModal)">
-  <div class="bg-white w-full sm:max-w-sm rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden"
-    onclick="event.stopPropagation()">
+  <div class="w-full sm:max-w-sm rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden border border-gray-700"
+    style="background:#111827" onclick="event.stopPropagation()">
     <div class="sm:hidden flex justify-center pt-3 pb-1">
-      <div class="w-10 h-1 bg-slate-200 rounded-full"></div>
+      <div class="w-10 h-1 rounded-full" style="background:#374151"></div>
     </div>
-    <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100">
+    <div class="flex items-center justify-between px-6 py-4" style="border-bottom:1px solid #1f2937">
       <div>
-        <h3 class="font-bold text-slate-800">Cargar Resultado</h3>
-        <p id="modal-resultado-label" class="text-xs text-slate-400 mt-0.5"></p>
+        <h3 class="font-bold text-white">Cargar Resultado</h3>
+        <p id="modal-resultado-label" class="text-xs mt-0.5" style="color:#6b7280"></p>
       </div>
-      <button onclick="closeResultadoModal()" class="w-9 h-9 rounded-xl flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-all">
+      <button onclick="closeResultadoModal()" class="w-9 h-9 rounded-xl flex items-center justify-center transition-all" style="color:#6b7280" onmouseover="this.style.background='#1f2937';this.style.color='#f9fafb'" onmouseout="this.style.background='transparent';this.style.color='#6b7280'">
         <i class="fas fa-times"></i>
       </button>
     </div>
     <div class="p-6">
       <div class="flex items-center gap-4 mb-6">
         <div class="flex-1 flex flex-col items-center gap-2">
-          <span id="modal-res-local" class="font-semibold text-slate-700 text-sm text-center leading-tight"></span>
-          <span class="text-xs text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">Local</span>
-          <input id="modal-res-goles-local" type="number" min="0" max="20" value="0" class="score-input" style="border-color:#fdba74">
+          <span id="modal-res-local" class="font-semibold text-white text-sm text-center leading-tight"></span>
+          <span class="text-xs px-2 py-0.5 rounded-full font-medium" style="color:#9ca3af;background:#1f2937">Local</span>
+          <input id="modal-res-goles-local" type="number" min="0" max="20" value="0" class="score-input" style="border-color:#f97316">
         </div>
         <div class="flex flex-col items-center">
-          <span class="text-slate-300 font-bold text-2xl">–</span>
+          <span class="font-bold text-2xl" style="color:#4b5563">–</span>
         </div>
         <div class="flex-1 flex flex-col items-center gap-2">
-          <span id="modal-res-visitante" class="font-semibold text-slate-700 text-sm text-center leading-tight"></span>
-          <span class="text-xs text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">Visitante</span>
-          <input id="modal-res-goles-visitante" type="number" min="0" max="20" value="0" class="score-input" style="border-color:#fdba74">
+          <span id="modal-res-visitante" class="font-semibold text-white text-sm text-center leading-tight"></span>
+          <span class="text-xs px-2 py-0.5 rounded-full font-medium" style="color:#9ca3af;background:#1f2937">Visitante</span>
+          <input id="modal-res-goles-visitante" type="number" min="0" max="20" value="0" class="score-input" style="border-color:#f97316">
         </div>
       </div>
-      <div id="modal-resultado-error" class="hidden text-center text-red-600 text-xs bg-red-50 px-3 py-2.5 rounded-xl mb-4">
+      <div id="modal-resultado-error" class="hidden text-center text-red-400 text-xs px-3 py-2.5 rounded-xl mb-4" style="background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.25)">
         <i class="fas fa-exclamation-circle mr-1"></i><span id="modal-res-err-msg"></span>
       </div>
       <button onclick="submitResultado()"
         class="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-3.5 rounded-2xl text-sm transition-all shadow-lg">
         <i class="fas fa-flag-checkered mr-2"></i>Finalizar Partido
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ════ MODAL: APLAZAR ═══════════════════════════ -->
+<div id="modal-aplazar"
+  class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-end sm:items-center justify-center z-50 hidden p-0 sm:p-4"
+  onclick="closeIfOutside(event,'modal-aplazar',closeAplazarModal)">
+  <div class="w-full sm:max-w-sm rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden border border-gray-700"
+    style="background:#111827" onclick="event.stopPropagation()">
+    <div class="sm:hidden flex justify-center pt-3 pb-1">
+      <div class="w-10 h-1 rounded-full" style="background:#374151"></div>
+    </div>
+    <div class="flex items-center justify-between px-6 py-4" style="border-bottom:1px solid #1f2937">
+      <div>
+        <h3 class="font-bold text-white"><i class="fas fa-calendar-times mr-2 text-amber-400"></i>Aplazar Partido</h3>
+        <p id="modal-aplazar-label" class="text-xs mt-0.5" style="color:#6b7280"></p>
+      </div>
+      <button onclick="closeAplazarModal()" class="w-9 h-9 rounded-xl flex items-center justify-center transition-all" style="color:#6b7280" onmouseover="this.style.background='#1f2937';this.style.color='#f9fafb'" onmouseout="this.style.background='transparent';this.style.color='#6b7280'">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="p-6">
+      <label class="block text-xs font-semibold uppercase tracking-wide mb-2" style="color:#9ca3af">Nueva fecha y hora</label>
+      <input id="modal-aplazar-fecha" type="datetime-local" class="admin-input mb-5">
+      <div id="modal-aplazar-error" class="hidden text-red-400 text-xs px-3 py-2.5 rounded-xl mb-4" style="background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.25)">
+        <i class="fas fa-exclamation-circle mr-1"></i><span id="modal-aplazar-err-msg"></span>
+      </div>
+      <button onclick="submitAplazar()"
+        class="w-full font-bold py-3.5 rounded-2xl text-sm transition-all shadow-lg text-white"
+        style="background:#b45309" onmouseover="this.style.background='#92400e'" onmouseout="this.style.background='#b45309'">
+        <i class="fas fa-calendar-times mr-2"></i>Confirmar Aplazamiento
       </button>
     </div>
   </div>
@@ -834,7 +803,6 @@ function parseDate(dt) {
   return new Date(dt);
 }
 
-// Country flag map
 const FLAGS = {
   'Argentina':'🇦🇷','Brasil':'🇧🇷','Brazil':'🇧🇷','Francia':'🇫🇷','France':'🇫🇷',
   'Alemania':'🇩🇪','Germany':'🇩🇪','España':'🇪🇸','Spain':'🇪🇸','Portugal':'🇵🇹',
@@ -845,88 +813,11 @@ const FLAGS = {
   'Croatia':'🇭🇷','Senegal':'🇸🇳','Ecuador':'🇪🇨','Perú':'🇵🇪','Peru':'🇵🇪',
   'Chile':'🇨🇱','Australia':'🇦🇺','Serbia':'🇷🇸','Suiza':'🇨🇭','Switzerland':'🇨🇭',
   'Ghana':'🇬🇭','Nigeria':'🇳🇬','Polonia':'🇵🇱','Dinamarca':'🇩🇰','Bélgica':'🇧🇪',
-  'Belgium':'🇧🇪','Inglaterra':'🏴󠁧󠁢󠁥󠁮󠁧󠁿','England':'🏴󠁧󠁢󠁥󠁮󠁧󠁿','Egipto':'🇪🇬','Egypt':'🇪🇬',
+  'Belgium':'🇧🇪','Inglaterra':'🏴󠁧󠁢󠁥󠁮󠁧󠁿','England':'🏴󠁧󠁢󠁥󠁮󠁧󠁿','Egipto':'🇪🇬',
   'Arabia Saudita':'🇸🇦','Camerún':'🇨🇲','Venezuela':'🇻🇪','Paraguay':'🇵🇾',
   'Bolivia':'🇧🇴','Costa Rica':'🇨🇷','Panamá':'🇵🇦','Jamaica':'🇯🇲'
 };
-
-function getFlag(nombre) {
-  return FLAGS[nombre] || '⚽';
-}
-
-// Deterministic hash for consistent odds
-function teamHash(idA, idB) {
-  const h = ((idA * 2654435761) ^ (idB * 2246822519)) >>> 0;
-  return h;
-}
-
-// Tier config
-const TIER = {
-  probable: {
-    label: 'La Probable', icon: 'fas fa-shield-alt',
-    cardClass: 't-probable', badgeClass: 'tb-probable',
-    color: 'var(--c-probable)', lineColor: '#10b981'
-  },
-  media: {
-    label: 'La Media', icon: 'fas fa-chart-line',
-    cardClass: 't-media', badgeClass: 'tb-media',
-    color: 'var(--c-media)', lineColor: '#f59e0b'
-  },
-  malcriada: {
-    label: 'La Malcriada', icon: 'fas fa-fire',
-    cardClass: 't-malcriada', badgeClass: 'tb-malcriada',
-    color: 'var(--c-malcriada)', lineColor: '#f43f5e'
-  }
-};
-
-function simularAnalisis(partido) {
-  const h = teamHash(partido.equipoLocalId || 1, partido.equipoVisitanteId || 2);
-
-  // Generate consistent raw percentages
-  const rL = 28 + (h % 44);               // 28–71
-  const rE = 14 + ((h >> 8) % 18);        // 14–31
-  const rV = 100 - rL - rE;
-
-  const pLocal     = Math.max(rL, 5);
-  const pEmpate    = Math.max(rE, 10);
-  const pVisitante = Math.max(100 - pLocal - pEmpate, 5);
-
-  // European odds with 7% bookmaker margin
-  const M = 1.07;
-  const oddsLocal     = (M * 100 / pLocal).toFixed(2);
-  const oddsEmpate    = (M * 100 / pEmpate).toFixed(2);
-  const oddsVisitante = (M * 100 / pVisitante).toFixed(2);
-
-  // Tier classification
-  const maxProb = Math.max(pLocal, pVisitante);
-  let tier, recommendation, recOdds, recLabel;
-
-  if (maxProb >= 62) {
-    tier = 'probable';
-    if (pLocal >= pVisitante) {
-      recommendation = partido.equipoLocalNombre;
-      recOdds = oddsLocal; recLabel = 'Victoria Local';
-    } else {
-      recommendation = partido.equipoVisitanteNombre;
-      recOdds = oddsVisitante; recLabel = 'Victoria Visitante';
-    }
-  } else if (maxProb >= 48) {
-    tier = 'media';
-    if (pLocal >= pVisitante) {
-      recommendation = partido.equipoLocalNombre;
-      recOdds = oddsLocal; recLabel = 'Victoria Local';
-    } else {
-      recommendation = partido.equipoVisitanteNombre;
-      recOdds = oddsVisitante; recLabel = 'Victoria Visitante';
-    }
-  } else {
-    tier = 'malcriada';
-    recommendation = 'Partido parejo';
-    recOdds = oddsEmpate; recLabel = 'Posible Empate';
-  }
-
-  return { pLocal, pEmpate, pVisitante, oddsLocal, oddsEmpate, oddsVisitante, tier, recommendation, recOdds, recLabel };
-}
+function getFlag(n) { return FLAGS[n] || '⚽'; }
 
 // ═══════════════════════════════════════════════════
 // API
@@ -970,9 +861,9 @@ function showAuthTab(tab) {
   const isLogin = tab === 'login';
   document.getElementById('form-login').classList.toggle('hidden', !isLogin);
   document.getElementById('form-register').classList.toggle('hidden', isLogin);
-  const active = 'flex-1 py-4 text-sm font-semibold text-blue-700 border-b-2 border-blue-600 transition-all';
+  const active   = 'flex-1 py-4 text-sm font-semibold text-blue-700 border-b-2 border-blue-600 transition-all';
   const inactive = 'flex-1 py-4 text-sm font-medium text-slate-400 border-b-2 border-transparent transition-all hover:text-slate-600';
-  document.getElementById('tab-login-btn').className   = isLogin  ? active : inactive;
+  document.getElementById('tab-login-btn').className    = isLogin  ? active : inactive;
   document.getElementById('tab-register-btn').className = !isLogin ? active : inactive;
 }
 
@@ -983,8 +874,8 @@ async function login() {
   document.getElementById('login-error').classList.add('hidden');
   try {
     const data = await api('POST', '/auth/login', {
-      email: document.getElementById('login-email').value.trim(),
-      contrasena: document.getElementById('login-password').value
+      email:     document.getElementById('login-email').value.trim(),
+      contrasena:document.getElementById('login-password').value
     });
     if (!data) return;
     token = data.token;
@@ -1058,16 +949,14 @@ function showTab(tab) {
     btn.classList.toggle('nav-active', btn.dataset.tab === tab);
   });
   if      (tab === 'partidos') loadPartidos();
-  else if (tab === 'analisis') loadAnalisis();
   else if (tab === 'ranking')  loadRanking();
+  else if (tab === 'grupos')   loadGrupos();
   else if (tab === 'admin')    loadAdmin();
 }
 
 function showAdminSub(sub) {
   document.querySelectorAll('.admin-sub').forEach(el => el.classList.add('hidden'));
-  document.querySelectorAll('.admin-sub-btn').forEach(btn => {
-    btn.classList.remove('sub-active');
-  });
+  document.querySelectorAll('.admin-sub-btn').forEach(btn => btn.classList.remove('sub-active'));
   const el = document.getElementById('admin-sub-' + sub);
   if (el) { el.classList.remove('hidden'); el.classList.add('fade-up'); }
   const btn = document.getElementById('admin-sub-' + sub + '-btn');
@@ -1083,60 +972,61 @@ async function loadPartidos() {
   const container = document.getElementById('partidos-container');
 
   container.innerHTML = [0,1,2].map(() => `
-    <div class="partido-card p-5 mb-4 fade-up">
-      <div class="skeleton h-4 w-28 mb-4"></div>
-      <div class="flex items-center justify-between mb-4">
-        <div class="skeleton h-6 w-32"></div>
-        <div class="skeleton h-8 w-24 rounded-xl"></div>
-        <div class="skeleton h-6 w-32"></div>
+    <div class="partido-card p-5 mb-4">
+      <div class="skeleton h-4 w-24 mb-4"></div>
+      <div class="flex items-center justify-between">
+        <div class="skeleton h-6 w-28"></div>
+        <div class="skeleton h-8 w-20 rounded-xl mx-4"></div>
+        <div class="skeleton h-6 w-28"></div>
       </div>
-      <div class="skeleton h-7 w-full rounded-xl mb-2"></div>
-      <div class="skeleton h-2 w-full rounded-full"></div>
     </div>`).join('');
 
   document.getElementById('refresh-icon').classList.add('spin');
   try {
-    const [partidos, fechas, misProns] = await Promise.all([
-      api('GET', url), api('GET', '/fechas'), api('GET', '/pronosticos/mios')
+    const [partidos, fechas, misProns, equipos] = await Promise.all([
+      api('GET', url), api('GET', '/fechas'), api('GET', '/pronosticos/mios'), api('GET', '/equipos')
     ]);
     allPartidos = partidos || [];
     allFechas   = fechas   || [];
+    allEquipos  = equipos  || [];
 
-    const sel = document.getElementById('filter-fecha');
+    // Actualizar filtro
+    const sel  = document.getElementById('filter-fecha');
     const prev = sel.value;
     sel.innerHTML = '<option value="">Todas las jornadas</option>' +
       allFechas.map(f => `<option value="${f.id}" ${String(f.id)===prev?'selected':''}>${f.nombre}</option>`).join('');
 
+    // Mapa pronósticos
     const pronMap = {};
     (misProns || []).forEach(p => { pronMap[p.partidoId] = p; });
 
     // Hero banner
     const upcoming = allPartidos.filter(p => p.estado === 'POR_JUGARSE').length;
     const myPts = (misProns || []).reduce((acc, p) => {
-      if (p.resultadoPronostico === 'EXACTO') return acc + 3;
+      if (p.resultadoPronostico === 'EXACTO')    return acc + 3;
       if (p.resultadoPronostico === 'TENDENCIA') return acc + 1;
       return acc;
     }, 0);
+    const myProns = (misProns || []).filter(p => p.resultadoPronostico).length;
     const heroEl = document.getElementById('partidos-hero');
-    if (heroEl) {
-      heroEl.innerHTML = `<div class="hero-banner fade-up">
+    if (heroEl) heroEl.innerHTML = `
+      <div class="hero-banner fade-up">
         <div class="hero-stat">
-          <div class="hero-stat-icon text-blue-400"><i class="fas fa-calendar-alt"></i></div>
+          <div style="font-size:.75rem;color:#60a5fa;margin-bottom:4px"><i class="fas fa-calendar-alt"></i></div>
           <div class="hero-stat-val">${upcoming}</div>
           <div class="hero-stat-lbl">Próximos</div>
         </div>
         <div class="hero-stat">
-          <div class="hero-stat-icon text-yellow-400"><i class="fas fa-star"></i></div>
+          <div style="font-size:.75rem;color:#fbbf24;margin-bottom:4px"><i class="fas fa-star"></i></div>
           <div class="hero-stat-val" style="color:#fbbf24">${myPts}</div>
           <div class="hero-stat-lbl">Mis puntos</div>
         </div>
         <div class="hero-stat">
-          <div class="hero-stat-icon" style="font-size:1rem">⚽</div>
-          <div class="hero-stat-val" style="font-size:1rem;font-family:'Inter',system-ui;font-weight:700;color:#6b7280">WC 2026</div>
-          <div class="hero-stat-lbl">Mundial</div>
+          <div style="font-size:.75rem;color:#34d399;margin-bottom:4px"><i class="fas fa-check-circle"></i></div>
+          <div class="hero-stat-val" style="color:#34d399">${myProns}</div>
+          <div class="hero-stat-lbl">Resueltos</div>
         </div>
       </div>`;
-    }
 
     if (!allPartidos.length) {
       container.innerHTML = `
@@ -1145,20 +1035,21 @@ async function loadPartidos() {
             <i class="fas fa-calendar-times text-3xl text-gray-600"></i>
           </div>
           <p class="font-semibold text-gray-400">No hay partidos cargados</p>
-          <p class="text-sm mt-1 text-gray-600">${currentUser.rol==='ADMINISTRADOR'?'Creá equipos, jornadas y partidos desde Admin':'Volvé más tarde cuando el admin cargue los partidos'}</p>
+          <p class="text-sm mt-1 text-gray-600">${currentUser.rol==='ADMINISTRADOR'?'Creá equipos, jornadas y partidos desde Admin':'Volvé más tarde'}</p>
         </div>`;
       return;
     }
 
+    // Agrupar por jornada
     const byFecha = {};
     allPartidos.forEach(p => {
-      if (!byFecha[p.fechaId]) byFecha[p.fechaId] = { nombre: p.fechaNombre, partidos: [] };
+      if (!byFecha[p.fechaId]) byFecha[p.fechaId] = { nombre:p.fechaNombre, partidos:[] };
       byFecha[p.fechaId].partidos.push(p);
     });
 
     container.innerHTML = Object.values(byFecha).map(g => `
       <div class="mb-8">
-        <div class="fecha-header mb-4">
+        <div class="fecha-header">
           <div class="fecha-bar"></div>
           <h3 class="font-bold text-white text-base">${g.nombre}</h3>
           <div class="flex-1 h-px bg-gray-800"></div>
@@ -1179,127 +1070,67 @@ async function loadPartidos() {
   }
 }
 
+function getEquipoImg(nombre) {
+  const eq = allEquipos.find(e => e.nombre === nombre);
+  if (eq?.imagenUrl) return `<img src="${eq.imagenUrl}" class="w-8 h-8 object-cover rounded-lg mx-auto mb-1">`;
+  return `<div class="text-2xl mb-1">${getFlag(nombre)}</div>`;
+}
+
 function renderPartido(p, miPron) {
   const isAdmin = currentUser?.rol === 'ADMINISTRADOR';
-  const an = simularAnalisis(p);
-  const t = TIER[an.tier];
-
   const flagL = getFlag(p.equipoLocalNombre);
   const flagV = getFlag(p.equipoVisitanteNombre);
 
-  // Status badge
   const statusBadge = {
     POR_JUGARSE: `<span class="sbadge sb-azul"><i class="fas fa-clock"></i>Por jugarse</span>`,
+    APLAZADO:    `<span class="sbadge sb-naranja"><i class="fas fa-calendar-times"></i>Aplazado</span>`,
     EN_JUEGO:    `<span class="sbadge sb-verde pulse-dot"><i class="fas fa-circle"></i>En juego</span>`,
     FINALIZADO:  `<span class="sbadge sb-gris"><i class="fas fa-check"></i>Finalizado</span>`
   }[p.estado] || '';
 
-  const horaStr = parseDate(p.fechaHoraInicio).toLocaleString('es-AR',{
+  const horaStr = parseDate(p.fechaHoraInicio).toLocaleString('es-AR', {
     weekday:'short', day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit'
   });
 
-  // Score or odds section
-  let centerContent = '';
+  // Centro: score o vs
+  let center = '';
   if (p.estado === 'FINALIZADO') {
-    const resIcon = p.resultado==='LOCAL' ? flagL : p.resultado==='VISITANTE' ? flagV : '🤝';
     const resText = p.resultado==='LOCAL' ? 'Ganó Local' : p.resultado==='VISITANTE' ? 'Ganó Visitante' : 'Empate';
-    centerContent = `
-      <div class="text-center px-4">
-        <div class="score-big">${p.golesLocal} – ${p.golesVisitante}</div>
-        <div class="text-xs text-gray-500 mt-1">${resIcon} ${resText}</div>
-      </div>`;
+    center = `<div class="text-center px-4">
+      <div class="score-big">${p.golesLocal} – ${p.golesVisitante}</div>
+      <div class="text-xs text-gray-500 mt-1">${resText}</div>
+    </div>`;
   } else if (p.estado === 'EN_JUEGO') {
-    centerContent = `
-      <div class="text-center px-4">
-        <div class="score-big text-gray-600">–</div>
-        <div class="text-xs text-emerald-400 font-semibold mt-1 pulse-dot">En curso</div>
-      </div>`;
+    center = `<div class="text-center px-4">
+      <div class="score-big text-gray-600">–</div>
+      <div class="text-xs text-emerald-400 font-semibold mt-1 pulse-dot">En curso</div>
+    </div>`;
   } else {
-    centerContent = `
-      <div class="text-center px-4 min-w-[80px]">
-        <div style="font-family:'Barlow Condensed',system-ui;font-size:1rem;font-weight:700;color:#6b7280">vs</div>
-        <div class="text-xs text-gray-600 mt-1 whitespace-nowrap">${horaStr}</div>
-      </div>`;
+    center = `<div class="text-center px-4 min-w-[80px]">
+      <div style="font-family:'Barlow Condensed',system-ui;font-size:1.1rem;font-weight:700;color:#4b5563">vs</div>
+      <div class="text-xs text-gray-600 mt-1 whitespace-nowrap">${horaStr}</div>
+    </div>`;
   }
 
-  // Odds + probability (only for non-finished matches)
-  let analysisHtml = '';
-  if (p.estado !== 'FINALIZADO') {
-    const highlightL = an.tier !== 'malcriada' && an.pLocal >= an.pVisitante ? 'highlight' : '';
-    const highlightV = an.tier !== 'malcriada' && an.pVisitante > an.pLocal ? 'highlight' : '';
-    const highlightE = an.tier === 'malcriada' ? 'highlight' : '';
-
-    analysisHtml = `
-      <div class="mt-4 pt-4 border-t border-gray-800">
-        <div class="odds-wrap mb-3">
-          <div class="odds-chip ${highlightL}">
-            <div class="odds-val" style="${highlightL ? 'color:var(--c-probable)' : ''}">${an.oddsLocal}</div>
-            <div class="odds-lbl">Local</div>
-          </div>
-          <div class="odds-chip ${highlightE}">
-            <div class="odds-val" style="${highlightE ? 'color:var(--c-malcriada)' : ''}">${an.oddsEmpate}</div>
-            <div class="odds-lbl">Empate</div>
-          </div>
-          <div class="odds-chip ${highlightV}">
-            <div class="odds-val" style="${highlightV ? 'color:var(--c-probable)' : ''}">${an.oddsVisitante}</div>
-            <div class="odds-lbl">Visitante</div>
-          </div>
-        </div>
-
-        <div class="mb-1.5 flex items-center justify-between text-xs text-gray-500">
-          <span>${p.equipoLocalNombre} <strong class="text-white">${an.pLocal}%</strong></span>
-          <span>Emp. <strong class="text-gray-400">${an.pEmpate}%</strong></span>
-          <span><strong class="text-white">${an.pVisitante}%</strong> ${p.equipoVisitanteNombre}</span>
-        </div>
-        <div class="prob-track">
-          <div class="prob-seg prob-local"    style="--bar-w:${an.pLocal}%"></div>
-          <div class="prob-seg prob-empate"   style="--bar-w:${an.pEmpate}%"></div>
-          <div class="prob-seg prob-visitante"style="--bar-w:${an.pVisitante}%"></div>
-        </div>
-
-        <div class="analysis-rec mt-3">
-          <i class="fas fa-lightbulb text-xs text-blue-400 flex-shrink-0"></i>
-          <span class="text-xs text-gray-400">
-            <span class="font-semibold" style="color:${t.color}">${t.label}:</span>
-            ${an.recLabel} <span class="font-mono font-bold text-white mx-1">@${an.recOdds}</span>
-            <span class="text-gray-600">· ${an.pLocal >= an.pVisitante ? an.pLocal : an.pVisitante}% prob.</span>
-          </span>
-        </div>
-      </div>`;
-  }
-
-  // Footer (pronostico actions)
+  // Footer
   let footer = '';
   if (!isAdmin) {
     if (miPron) {
       const resMap = {
-        EXACTO:     { color:'text-emerald-400', bg:'rgba(16,185,129,.12)', bd:'rgba(16,185,129,.3)', icon:'fas fa-bullseye', txt:'Exacto +3pts' },
-        TENDENCIA:  { color:'text-amber-400',   bg:'rgba(245,158,11,.12)', bd:'rgba(245,158,11,.3)', icon:'fas fa-bolt',     txt:'Tendencia +1pt' },
-        SIN_ACIERTO:{ color:'text-red-400',     bg:'rgba(244,63,94,.12)',  bd:'rgba(244,63,94,.3)',  icon:'fas fa-times',    txt:'Sin acierto' }
+        EXACTO:     { cls:'pb-exacto',    icon:'fas fa-bullseye',     txt:'Exacto · +3 pts' },
+        TENDENCIA:  { cls:'pb-tendencia', icon:'fas fa-bolt',         txt:'Tendencia · +1 pt' },
+        SIN_ACIERTO:{ cls:'pb-fallo',     icon:'fas fa-times-circle', txt:'Sin acierto' }
       };
       const res = miPron.resultadoPronostico ? resMap[miPron.resultadoPronostico] : null;
-      const editBtn = !miPron.resultadoPronostico && p.estado==='POR_JUGARSE'
+      const editBtn = !miPron.resultadoPronostico && p.estado === 'POR_JUGARSE'
         ? `<button onclick="openPronosticoModal(${p.id})" class="text-blue-400 hover:text-blue-300 text-xs font-semibold underline underline-offset-2">Modificar</button>`
         : '';
-      if (res && p.estado === 'FINALIZADO') {
-        footer = `<div class="mt-4 pt-3 border-t border-gray-800">
-          <div class="pron-result-badge" style="background:${res.bg};border:1px solid ${res.bd}">
-            <div class="badge-icon"><i class="${res.icon} ${res.color}"></i></div>
-            <div class="badge-score ${res.color}">${miPron.golesLocal} – ${miPron.golesVisitante}</div>
-            <div class="badge-label ${res.color}">${res.txt}</div>
-          </div>
-        </div>`;
-      } else {
-        footer = `<div class="mt-4 pt-3 border-t border-gray-800 flex items-center justify-between">
-          <div class="flex items-center gap-2 text-xs text-gray-500">
-            <i class="fas fa-check-circle text-gray-600"></i>
-            Mi pronóstico: <strong class="text-white font-mono">${miPron.golesLocal}–${miPron.golesVisitante}</strong>
-          </div>
-          ${res
-            ? `<span class="text-xs font-semibold px-2.5 py-1 rounded-full ${res.color}" style="background:${res.bg};border:1px solid ${res.bd}"><i class="${res.icon} mr-1"></i>${res.txt}</span>`
-            : editBtn}
-        </div>`;
-      }
+      footer = `<div class="mt-4 pt-3 border-t border-gray-800 flex items-center justify-between">
+        <div class="text-xs text-gray-500">
+          Mi pronóstico: <strong class="text-white font-mono">${miPron.golesLocal}–${miPron.golesVisitante}</strong>
+        </div>
+        ${res ? `<span class="pron-badge ${res.cls}"><i class="${res.icon}"></i>${res.txt}</span>` : editBtn}
+      </div>`;
     } else if (p.estado === 'POR_JUGARSE') {
       footer = `<div class="mt-4 pt-3 border-t border-gray-800 flex justify-center">
         <button onclick="openPronosticoModal(${p.id})"
@@ -1312,11 +1143,15 @@ function renderPartido(p, miPron) {
         No hiciste pronóstico para este partido
       </div>`;
     }
-  } else if (p.estado === 'POR_JUGARSE') {
-    footer = `<div class="mt-4 pt-3 border-t border-gray-800 flex justify-end">
+  } else if (p.estado === 'POR_JUGARSE' || p.estado === 'APLAZADO') {
+    footer = `<div class="mt-4 pt-3 border-t border-gray-800 flex items-center justify-end gap-2">
+      <button onclick="openAplazarModal(${p.id})"
+        class="flex items-center gap-2 bg-amber-700 hover:bg-amber-600 text-white text-xs font-semibold px-4 py-2 rounded-xl transition-all">
+        <i class="fas fa-calendar-times"></i>Aplazar
+      </button>
       <button onclick="iniciarPartido(${p.id})"
-        class="flex items-center gap-2 bg-emerald-700 hover:bg-emerald-600 text-white text-xs font-semibold px-5 py-2 rounded-xl transition-all">
-        <i class="fas fa-play"></i>Iniciar partido
+        class="flex items-center gap-2 bg-emerald-700 hover:bg-emerald-600 text-white text-xs font-semibold px-4 py-2 rounded-xl transition-all">
+        <i class="fas fa-play"></i>Iniciar
       </button>
     </div>`;
   } else if (p.estado === 'EN_JUEGO') {
@@ -1328,143 +1163,26 @@ function renderPartido(p, miPron) {
     </div>`;
   }
 
-  return `<div class="partido-card ${t.cardClass} p-5">
-    <!-- Header row -->
+  return `<div class="partido-card p-5">
     <div class="flex items-center justify-between mb-4">
-      <span class="tier-badge ${t.badgeClass}">
-        <i class="${t.icon}"></i>${t.label}
-      </span>
-      <div class="flex items-center gap-2">
-        <span class="text-xs text-gray-600">${p.fechaNombre}</span>
-        ${statusBadge}
-      </div>
+      <span class="text-xs text-gray-600">${p.fechaNombre}</span>
+      ${statusBadge}
     </div>
-
-    <!-- Teams row -->
     <div class="flex items-center">
       <div class="flex-1 text-right pr-3">
-        <div class="text-2xl mb-1">${flagL}</div>
-        <div class="font-bold text-white team-name leading-tight">${p.equipoLocalNombre}</div>
+        ${getEquipoImg(p.equipoLocalNombre)}
+        <div class="font-bold text-white team-name">${p.equipoLocalNombre}</div>
         <div class="text-xs text-gray-600 mt-0.5">Local</div>
       </div>
-      ${centerContent}
+      ${center}
       <div class="flex-1 text-left pl-3">
-        <div class="text-2xl mb-1">${flagV}</div>
-        <div class="font-bold text-white team-name leading-tight">${p.equipoVisitanteNombre}</div>
+        ${getEquipoImg(p.equipoVisitanteNombre)}
+        <div class="font-bold text-white team-name">${p.equipoVisitanteNombre}</div>
         <div class="text-xs text-gray-600 mt-0.5">Visitante</div>
       </div>
     </div>
-
-    ${analysisHtml}
     ${footer}
   </div>`;
-}
-
-// ═══════════════════════════════════════════════════
-// ANÁLISIS TAB
-// ═══════════════════════════════════════════════════
-async function loadAnalisis() {
-  const container = document.getElementById('analisis-container');
-  container.innerHTML = `<div class="skeleton h-40 w-full rounded-2xl mb-4"></div><div class="skeleton h-40 w-full rounded-2xl mb-4"></div>`;
-
-  try {
-    const partidos = await api('GET', '/partidos');
-    allPartidos = partidos || [];
-
-    const upcoming = allPartidos.filter(p => p.estado === 'POR_JUGARSE');
-
-    if (!upcoming.length) {
-      container.innerHTML = `
-        <div class="flex flex-col items-center justify-center py-24 text-gray-500">
-          <i class="fas fa-chart-bar text-4xl text-gray-700 mb-4"></i>
-          <p class="font-semibold text-gray-400">No hay partidos próximos</p>
-          <p class="text-sm text-gray-600 mt-1">El análisis aparece aquí cuando hay partidos por jugarse</p>
-        </div>`;
-      return;
-    }
-
-    // Group by tier
-    const byTier = { probable: [], media: [], malcriada: [] };
-    upcoming.forEach(p => {
-      const an = simularAnalisis(p);
-      byTier[an.tier].push({ p, an });
-    });
-
-    const tierOrder = ['probable', 'media', 'malcriada'];
-    container.innerHTML = tierOrder.map(tierKey => {
-      const items = byTier[tierKey];
-      if (!items.length) return '';
-      const t = TIER[tierKey];
-
-      const cards = items.map(({ p, an }) => {
-        const flagL = getFlag(p.equipoLocalNombre);
-        const flagV = getFlag(p.equipoVisitanteNombre);
-        const highlightL = tierKey !== 'malcriada' && an.pLocal >= an.pVisitante;
-        const highlightV = tierKey !== 'malcriada' && an.pVisitante > an.pLocal;
-        const highlightE = tierKey === 'malcriada';
-
-        return `<div class="rounded-2xl p-5 border" style="background:var(--surface);border-color:var(--border)">
-          <div class="flex items-center justify-between mb-3">
-            <div class="flex items-center gap-2">
-              <span class="text-base">${flagL}</span>
-              <span class="font-bold text-white text-sm">${p.equipoLocalNombre}</span>
-              <span class="text-gray-600 text-xs mx-1">vs</span>
-              <span class="font-bold text-white text-sm">${p.equipoVisitanteNombre}</span>
-              <span class="text-base">${flagV}</span>
-            </div>
-            <span class="text-xs text-gray-600">${p.fechaNombre}</span>
-          </div>
-
-          <div class="flex gap-2 mb-3">
-            <div class="odds-chip flex-1 ${highlightL ? 'highlight' : ''}">
-              <div class="odds-val" style="${highlightL ? 'color:var(--c-probable)' : ''}">${an.oddsLocal}</div>
-              <div class="odds-lbl">${p.equipoLocalNombre.slice(0,6)}</div>
-            </div>
-            <div class="odds-chip flex-1 ${highlightE ? 'highlight' : ''}">
-              <div class="odds-val" style="${highlightE ? 'color:var(--c-malcriada)' : ''}">${an.oddsEmpate}</div>
-              <div class="odds-lbl">Empate</div>
-            </div>
-            <div class="odds-chip flex-1 ${highlightV ? 'highlight' : ''}">
-              <div class="odds-val" style="${highlightV ? 'color:var(--c-probable)' : ''}">${an.oddsVisitante}</div>
-              <div class="odds-lbl">${p.equipoVisitanteNombre.slice(0,6)}</div>
-            </div>
-          </div>
-
-          <div class="prob-track mb-2">
-            <div class="prob-seg prob-local"     style="--bar-w:${an.pLocal}%"></div>
-            <div class="prob-seg prob-empate"    style="--bar-w:${an.pEmpate}%"></div>
-            <div class="prob-seg prob-visitante" style="--bar-w:${an.pVisitante}%"></div>
-          </div>
-          <div class="flex justify-between text-xs text-gray-600">
-            <span>${an.pLocal}% local</span>
-            <span>${an.pEmpate}% empate</span>
-            <span>${an.pVisitante}% visitante</span>
-          </div>
-
-          <div class="analysis-rec mt-3">
-            <i class="fas fa-arrow-right text-xs text-blue-400 flex-shrink-0"></i>
-            <span class="text-xs text-gray-400">
-              Apuesta: <strong class="text-white">${an.recLabel}</strong>
-              <span class="font-mono font-bold ml-1" style="color:${t.color}">@${an.recOdds}</span>
-            </span>
-          </div>
-        </div>`;
-      }).join('');
-
-      return `<div class="mb-8">
-        <div class="tier-section-header">
-          <span class="tier-badge ${t.badgeClass} text-sm px-3 py-1.5">
-            <i class="${t.icon}"></i>${t.label}
-          </span>
-          <div class="tier-section-line" style="background:linear-gradient(90deg,${t.lineColor}40,transparent)"></div>
-          <span class="text-xs text-gray-600">${items.length} partido${items.length!==1?'s':''}</span>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">${cards}</div>
-      </div>`;
-    }).join('');
-  } catch(e) {
-    container.innerHTML = `<div class="text-center py-12 text-red-400"><i class="fas fa-exclamation-circle text-2xl mb-2 block"></i>${e.message}</div>`;
-  }
 }
 
 // ═══════════════════════════════════════════════════
@@ -1501,13 +1219,50 @@ async function submitPronostico() {
   }
 }
 
+function openAplazarModal(partidoId) {
+  const p = allPartidos.find(x => x.id === partidoId);
+  if (!p) return;
+  currentPartidoId = partidoId;
+  document.getElementById('modal-aplazar-label').textContent =
+    `${p.equipoLocalNombre} vs ${p.equipoVisitanteNombre} · ${p.fechaNombre}`;
+  const fechaActual = parseDate(p.fechaHoraInicio);
+  const pad = n => String(n).padStart(2, '0');
+  const localIso = `${fechaActual.getFullYear()}-${pad(fechaActual.getMonth()+1)}-${pad(fechaActual.getDate())}T${pad(fechaActual.getHours())}:${pad(fechaActual.getMinutes())}`;
+  document.getElementById('modal-aplazar-fecha').value = localIso;
+  document.getElementById('modal-aplazar-error').classList.add('hidden');
+  document.getElementById('modal-aplazar').classList.remove('hidden');
+}
+function closeAplazarModal() { document.getElementById('modal-aplazar').classList.add('hidden'); }
+
+async function submitAplazar() {
+  const fechaStr = document.getElementById('modal-aplazar-fecha').value;
+  if (!fechaStr) {
+    document.getElementById('modal-aplazar-err-msg').textContent = 'Seleccioná la nueva fecha y hora';
+    document.getElementById('modal-aplazar-error').classList.remove('hidden');
+    return;
+  }
+  document.getElementById('modal-aplazar-error').classList.add('hidden');
+  try {
+    const nuevaFechaHoraInicio = new Date(fechaStr).toISOString().slice(0, 19);
+    await api('PATCH', `/partidos/${currentPartidoId}/aplazar`, { nuevaFechaHoraInicio });
+    toast('Partido aplazado. Nueva fecha guardada.');
+    closeAplazarModal();
+    loadPartidosAdmin();
+    if (!document.getElementById('tab-partidos').classList.contains('hidden')) loadPartidos();
+  } catch(e) {
+    document.getElementById('modal-aplazar-err-msg').textContent = e.message;
+    document.getElementById('modal-aplazar-error').classList.remove('hidden');
+  }
+}
+
 function openResultadoModal(partidoId) {
   const p = allPartidos.find(x => x.id === partidoId);
   if (!p) return;
   currentPartidoId = partidoId;
   document.getElementById('modal-res-local').textContent     = p.equipoLocalNombre;
   document.getElementById('modal-res-visitante').textContent = p.equipoVisitanteNombre;
-  document.getElementById('modal-resultado-label').textContent = `${p.fechaNombre} · ${p.equipoLocalNombre} vs ${p.equipoVisitanteNombre}`;
+  document.getElementById('modal-resultado-label').textContent =
+    `${p.fechaNombre} · ${p.equipoLocalNombre} vs ${p.equipoVisitanteNombre}`;
   document.getElementById('modal-res-goles-local').value     = 0;
   document.getElementById('modal-res-goles-visitante').value = 0;
   document.getElementById('modal-resultado-error').classList.add('hidden');
@@ -1521,7 +1276,7 @@ async function submitResultado() {
   document.getElementById('modal-resultado-error').classList.add('hidden');
   try {
     await api('PATCH', `/partidos/${currentPartidoId}/resultado`, { golesLocal, golesVisitante });
-    toast('🎉 Resultado cargado. Puntos calculados!');
+    toast('Resultado cargado. Puntos calculados!');
     closeResultadoModal();
     loadPartidosAdmin();
   } catch(e) {
@@ -1537,7 +1292,6 @@ async function loadRanking() {
   const tbody = document.getElementById('ranking-body');
   try {
     const ranking = await api('GET', '/ranking');
-    const medals = ['🥇','🥈','🥉'];
     if (!(ranking||[]).length) {
       tbody.innerHTML = `<tr><td colspan="4" class="text-center py-16">
         <i class="fas fa-trophy text-4xl text-gray-700 mb-3 block"></i>
@@ -1545,23 +1299,22 @@ async function loadRanking() {
       </td></tr>`;
       return;
     }
-    const maxPuntos = ranking[0]?.puntos || 1;
+    const maxPts = ranking[0]?.puntos || 1;
+    const medals = ['🥇','🥈','🥉'];
     tbody.innerHTML = ranking.map((r, i) => {
       const isMe = currentUser && r.nombre===currentUser.nombre && r.apellido===currentUser.apellido;
-      const rowBg = i===0 ? 'rgba(245,158,11,.07)' : i===1 ? 'rgba(148,163,184,.04)' : i===2 ? 'rgba(205,127,50,.06)' : '';
-      const barPct = maxPuntos > 0 ? Math.round((r.puntos / maxPuntos) * 100) : 0;
-      return `<tr class="rank-row ${isMe ? 'ring-1 ring-inset ring-blue-500/30' : ''}" style="background:${rowBg}">
-        <td class="py-4 px-5 text-base">${i<3 ? medals[i] : `<span class="font-mono font-bold text-gray-500">${r.posicion}</span>`}</td>
+      const pct  = Math.round((r.puntos / maxPts) * 100);
+      const rowBg = i===0 ? 'rgba(245,158,11,.06)' : i===1 ? 'rgba(148,163,184,.03)' : i===2 ? 'rgba(205,127,50,.05)' : '';
+      return `<tr class="rank-row ${isMe?'ring-1 ring-inset ring-blue-500/30':''}" style="background:${rowBg}">
+        <td class="py-4 px-5 text-base">${i<3 ? medals[i] : `<span class="font-mono font-bold text-gray-500 text-sm">${r.posicion}</span>`}</td>
         <td class="py-4 px-5">
           <div class="font-semibold text-white text-sm">${r.nombre} ${r.apellido}</div>
           ${isMe ? '<div class="text-xs text-blue-400 font-medium">← vos</div>' : ''}
         </td>
         <td class="py-4 px-5 text-center">
-          <span class="font-display font-extrabold text-yellow-400 text-xl" style="font-family:'Barlow Condensed',system-ui">${r.puntos}</span>
+          <span style="font-family:'Barlow Condensed',system-ui;font-size:1.5rem;font-weight:900;color:#fbbf24">${r.puntos}</span>
           <span class="text-xs text-gray-600 ml-0.5">pts</span>
-          <div class="rank-bar-wrap mt-1" style="width:80px;margin:4px auto 0">
-            <div class="rank-bar-fill" style="width:${barPct}%"></div>
-          </div>
+          <div class="rank-bar-wrap w-20 mx-auto"><div class="rank-bar-fill" style="--bar-w:${pct}%"></div></div>
         </td>
         <td class="py-4 px-5 text-center hidden sm:table-cell">
           <span class="font-semibold text-emerald-400">${r.cantidadExactos}</span>
@@ -1576,6 +1329,89 @@ async function loadRanking() {
 // ═══════════════════════════════════════════════════
 // GRUPOS
 // ═══════════════════════════════════════════════════
+let _grupoSeleccionadoId = null;
+let _misGruposIds = new Set();
+
+function showGruposSubTab(tab) {
+  const el = document.getElementById('grupo-acciones');
+  if (tab === 'crear') el.classList.toggle('hidden');
+}
+
+async function loadGrupos() {
+  const [todos, mios] = await Promise.all([
+    api('GET', '/grupos'), api('GET', '/grupos/mis-grupos')
+  ]);
+  _misGruposIds = new Set((mios||[]).map(g => g.id));
+
+  // Mis grupos
+  const misEl = document.getElementById('mis-grupos-list');
+  if (!(mios||[]).length) {
+    misEl.innerHTML = `<div class="text-xs py-4 text-center" style="color:#4b5563">Todavía no pertenecés a ningún grupo. Creá uno o ingresá un código.</div>`;
+  } else {
+    misEl.innerHTML = (mios||[]).map(g => `
+      <div class="flex items-center justify-between px-4 py-3.5 rounded-xl border border-blue-500/20 mb-2 group transition-all hover:border-blue-500/40" style="background:rgba(59,130,246,.06)">
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-xl flex items-center justify-center bg-blue-500/15 flex-shrink-0">
+            <i class="fas fa-users text-blue-400 text-sm"></i>
+          </div>
+          <div>
+            <div class="font-semibold text-white text-sm">${g.nombre}</div>
+            <div class="text-xs" style="color:#6b7280">
+              <i class="fas fa-user mr-1"></i>${g.creadorNombre} ${g.creadorApellido}
+              <span class="mx-1.5">·</span>
+              <i class="fas fa-users mr-1"></i>${g.cantidadIntegrantes} miembro${g.cantidadIntegrantes!==1?'s':''}
+            </div>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <div class="font-mono text-xs text-blue-300 bg-blue-900/30 px-2.5 py-1 rounded-lg tracking-widest border border-blue-500/20">${g.codigoDeAcceso}</div>
+          <button onclick="loadGrupoRanking(${g.id},'${g.nombre.replace(/'/g, "\\'")}')"
+            class="flex items-center gap-1.5 text-xs bg-blue-700 hover:bg-blue-600 text-white px-3 py-1.5 rounded-xl font-semibold transition-all">
+            <i class="fas fa-trophy"></i>Ver ranking
+          </button>
+        </div>
+      </div>`).join('');
+  }
+
+  // Todos los grupos
+  const todosEl = document.getElementById('todos-grupos-list');
+  if (!(todos||[]).length) {
+    todosEl.innerHTML = `<div class="text-xs py-4 text-center" style="color:#4b5563">No hay grupos creados todavía.</div>`;
+  } else {
+    todosEl.innerHTML = (todos||[]).map(g => {
+      const esMio = _misGruposIds.has(g.id);
+      return `
+        <div class="flex items-center justify-between px-4 py-3.5 rounded-xl border border-gray-700/60 mb-2 transition-all hover:border-gray-600/60" style="background:var(--surface)">
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style="background:var(--surface2)">
+              <i class="fas fa-users text-gray-500 text-sm"></i>
+            </div>
+            <div>
+              <div class="font-semibold text-white text-sm">${g.nombre}</div>
+              <div class="text-xs" style="color:#6b7280">
+                <i class="fas fa-user mr-1"></i>${g.creadorNombre} ${g.creadorApellido}
+                <span class="mx-1.5">·</span>
+                <i class="fas fa-users mr-1"></i>${g.cantidadIntegrantes} miembro${g.cantidadIntegrantes!==1?'s':''}
+              </div>
+            </div>
+          </div>
+          <div>
+            ${esMio
+              ? `<button onclick="loadGrupoRanking(${g.id},'${g.nombre.replace(/'/g, "\\'")}')"
+                  class="flex items-center gap-1.5 text-xs bg-blue-700 hover:bg-blue-600 text-white px-3 py-1.5 rounded-xl font-semibold transition-all">
+                  <i class="fas fa-trophy"></i>Ver ranking
+                </button>`
+              : `<button onclick="abrirModalCodigo(${g.id},'${g.nombre.replace(/'/g, "\\'")}')"
+                  class="flex items-center gap-1.5 text-xs text-gray-400 hover:text-white border border-gray-700 hover:border-gray-500 px-3 py-1.5 rounded-xl font-semibold transition-all">
+                  <i class="fas fa-lock"></i>Acceder
+                </button>`
+            }
+          </div>
+        </div>`;
+    }).join('');
+  }
+}
+
 async function crearGrupo() {
   const nombre = document.getElementById('grupo-nombre').value.trim();
   const msg = document.getElementById('grupo-create-msg');
@@ -1583,11 +1419,12 @@ async function crearGrupo() {
   try {
     const g = await api('POST', '/grupos', { nombre });
     msg.innerHTML = `<div class="rounded-xl p-3 text-xs mt-1" style="background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.25)">
-      <div class="font-semibold text-emerald-400 mb-1">Grupo creado exitosamente</div>
-      <div class="text-gray-400">Código: <span class="font-mono font-bold text-lg text-white tracking-widest">${g.codigoDeAcceso}</span></div>
+      <div class="font-semibold text-emerald-400 mb-1">¡Grupo creado!</div>
+      <div style="color:#9ca3af">Código: <span class="font-mono font-bold text-lg text-white tracking-widest">${g.codigoDeAcceso}</span></div>
     </div>`;
     toast('Grupo creado. Código: ' + g.codigoDeAcceso);
     document.getElementById('grupo-nombre').value = '';
+    loadGrupos();
   } catch(e) { msg.innerHTML = `<span class="text-red-400 text-xs">${e.message}</span>`; }
 }
 
@@ -1599,25 +1436,69 @@ async function unirseGrupo() {
     const g = await api('POST', '/grupos/unirse', { codigoDeAcceso: codigo });
     msg.innerHTML = `<span class="text-emerald-400 text-xs font-medium">Te uniste a "${g.nombre}"</span>`;
     document.getElementById('grupo-codigo').value = '';
-    loadGrupoRanking(g.id, g.nombre);
+    loadGrupos();
+    setTimeout(() => loadGrupoRanking(g.id, g.nombre), 400);
   } catch(e) { msg.innerHTML = `<span class="text-red-400 text-xs">${e.message}</span>`; }
+}
+
+function abrirModalCodigo(grupoId, nombre) {
+  _grupoSeleccionadoId = grupoId;
+  document.getElementById('modal-codigo-grupo-nombre').textContent = nombre;
+  document.getElementById('modal-codigo-input').value = '';
+  document.getElementById('modal-codigo-error').classList.add('hidden');
+  document.getElementById('modal-codigo-grupo').classList.remove('hidden');
+  setTimeout(() => document.getElementById('modal-codigo-input').focus(), 100);
+}
+function cerrarModalCodigo() { document.getElementById('modal-codigo-grupo').classList.add('hidden'); }
+
+async function submitCodigoGrupo() {
+  const codigo = document.getElementById('modal-codigo-input').value.trim().toUpperCase();
+  const errEl = document.getElementById('modal-codigo-error');
+  if (!codigo) { errEl.textContent = 'Ingresá el código'; errEl.classList.remove('hidden'); return; }
+  errEl.classList.add('hidden');
+  try {
+    const g = await api('POST', '/grupos/unirse', { codigoDeAcceso: codigo });
+    cerrarModalCodigo();
+    toast('Te uniste a "' + g.nombre + '"');
+    loadGrupos();
+    setTimeout(() => loadGrupoRanking(g.id, g.nombre), 400);
+  } catch(e) {
+    errEl.textContent = e.message;
+    errEl.classList.remove('hidden');
+  }
 }
 
 async function loadGrupoRanking(grupoId, nombre) {
   const sec = document.getElementById('grupo-ranking-section');
   sec.classList.remove('hidden');
+  sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
   document.getElementById('grupo-nombre-display').textContent = nombre;
   const tbody = document.getElementById('grupo-ranking-body');
   tbody.innerHTML = `<tr><td colspan="4" class="text-center py-8 text-gray-600"><i class="fas fa-circle-notch spin"></i></td></tr>`;
-  const ranking = await api('GET', `/ranking/grupo/${grupoId}`);
-  const medals = ['🥇','🥈','🥉'];
-  tbody.innerHTML = (ranking||[]).map((r,i) =>
-    `<tr class="rank-row">
-      <td class="py-4 px-5 text-base">${i<3?medals[i]:`<span class="font-mono font-bold text-gray-500">${r.posicion}</span>`}</td>
-      <td class="py-4 px-5 font-semibold text-white text-sm">${r.nombre} ${r.apellido}</td>
-      <td class="py-4 px-5 text-center font-extrabold text-yellow-400 text-xl" style="font-family:'Barlow Condensed',system-ui">${r.puntos}</td>
-      <td class="py-4 px-5 text-center font-semibold text-emerald-400 hidden sm:table-cell">${r.cantidadExactos}</td>
-    </tr>`).join('') || `<tr><td colspan="4" class="text-center py-8 text-gray-600">Sin participantes</td></tr>`;
+  try {
+    const ranking = await api('GET', `/ranking/grupo/${grupoId}`);
+    const medals = ['🥇','🥈','🥉'];
+    const maxPts = ranking?.[0]?.puntos || 1;
+    tbody.innerHTML = (ranking||[]).map((r, i) => {
+      const isMe = currentUser && r.nombre===currentUser.nombre && r.apellido===currentUser.apellido;
+      const pct  = Math.round((r.puntos / maxPts) * 100);
+      return `<tr class="rank-row ${isMe?'ring-1 ring-inset ring-blue-500/30':''}">
+        <td class="py-4 px-5 text-base">${i<3?medals[i]:`<span class="font-mono font-bold text-gray-500 text-sm">${r.posicion}</span>`}</td>
+        <td class="py-4 px-5">
+          <div class="font-semibold text-white text-sm">${r.nombre} ${r.apellido}</div>
+          ${isMe ? '<div class="text-xs text-blue-400 font-medium">← vos</div>' : ''}
+        </td>
+        <td class="py-4 px-5 text-center">
+          <span style="font-family:'Barlow Condensed',system-ui;font-size:1.5rem;font-weight:900;color:#fbbf24">${r.puntos}</span>
+          <span class="text-xs text-gray-600 ml-0.5">pts</span>
+          <div class="rank-bar-wrap w-20 mx-auto"><div class="rank-bar-fill" style="--bar-w:${pct}%"></div></div>
+        </td>
+        <td class="py-4 px-5 text-center font-semibold text-emerald-400 hidden sm:table-cell">${r.cantidadExactos}</td>
+      </tr>`;
+    }).join('') || `<tr><td colspan="4" class="text-center py-8 text-gray-600">Sin participantes</td></tr>`;
+  } catch(e) {
+    tbody.innerHTML = `<tr><td colspan="4" class="text-center py-8 text-red-400">${e.message}</td></tr>`;
+  }
 }
 
 // ═══════════════════════════════════════════════════
@@ -1637,36 +1518,33 @@ async function loadAdmin() {
 function renderEquiposAdmin() {
   document.getElementById('equipos-admin-list').innerHTML = !allEquipos.length
     ? `<div class="text-center py-8 text-gray-700"><i class="fas fa-shield-alt text-4xl mb-2 block"></i><p class="text-xs">Sin equipos todavía</p></div>`
-    : allEquipos.map(e => {
-        const flag = getFlag(e.nombre);
-        return `<div class="flex items-center justify-between px-4 py-2.5 rounded-xl border border-gray-700/60 group" style="background:var(--surface2)">
+    : allEquipos.map(e => `
+        <div class="flex items-center justify-between px-4 py-2.5 rounded-xl border border-gray-700/60 group" style="background:var(--surface2)">
           <div class="flex items-center gap-3">
-            <div class="w-9 h-9 rounded-xl flex items-center justify-center text-base" style="background:rgba(59,130,246,.12)">${flag}</div>
+            <div class="w-9 h-9 rounded-xl flex items-center justify-center text-base overflow-hidden" style="background:rgba(59,130,246,.08)">
+              ${e.imagenUrl ? `<img src="${e.imagenUrl}" class="w-full h-full object-cover">` : `<span>${getFlag(e.nombre)}</span>`}
+            </div>
             <div>
               <div class="font-medium text-white text-sm">${e.nombre}</div>
-              <div class="font-mono text-xs text-gray-500">${e.abreviatura}</div>
+              ${e.abreviatura && e.abreviatura.trim() ? `<div class="font-mono text-xs text-gray-500">${e.abreviatura}</div>` : ''}
             </div>
           </div>
           <button onclick="eliminarEquipo(${e.id})" title="Eliminar"
             class="opacity-0 group-hover:opacity-100 text-red-500 hover:text-red-400 w-8 h-8 flex items-center justify-center rounded-lg transition-all">
             <i class="fas fa-trash text-xs"></i>
           </button>
-        </div>`;
-      }).join('');
+        </div>`).join('');
 }
 
 function renderFechasAdmin() {
+  const badgeMap = { PROGRAMADA:'sb-azul', EN_JUEGO:'sb-verde', FINALIZADA:'sb-gris', APLAZADA:'sb-naranja' };
   document.getElementById('fechas-admin-list').innerHTML = !allFechas.length
     ? `<div class="text-center py-8 text-gray-700"><i class="fas fa-calendar text-4xl mb-2 block"></i><p class="text-xs">Sin jornadas todavía</p></div>`
-    : allFechas.map(f => {
-        const badgeMap = {
-          PROGRAMADA:'sb-azul', EN_JUEGO:'sb-verde', FINALIZADA:'sb-gris', APLAZADA:'sb-naranja'
-        };
-        return `<div class="flex items-center justify-between px-4 py-2.5 rounded-xl border border-gray-700/60" style="background:var(--surface2)">
+    : allFechas.map(f => `
+        <div class="flex items-center justify-between px-4 py-2.5 rounded-xl border border-gray-700/60" style="background:var(--surface2)">
           <span class="font-medium text-white text-sm">${f.nombre}</span>
           <span class="sbadge ${badgeMap[f.estado]||'sb-gris'}">${f.estado}</span>
-        </div>`;
-      }).join('');
+        </div>`).join('');
 }
 
 function populatePartidoSelects() {
@@ -1680,18 +1558,23 @@ function populatePartidoSelects() {
 async function loadPartidosAdmin() {
   const partidos = await api('GET', '/partidos');
   allPartidos = partidos || [];
-  const badgeMap = { POR_JUGARSE:'sb-azul', EN_JUEGO:'sb-verde', FINALIZADO:'sb-gris' };
+  const badgeMap = { POR_JUGARSE:'sb-azul', APLAZADO:'sb-naranja', EN_JUEGO:'sb-verde', FINALIZADO:'sb-gris' };
   document.getElementById('partidos-admin-list').innerHTML = !allPartidos.length
     ? `<div class="text-center py-8 text-gray-700"><i class="fas fa-futbol text-4xl mb-2 block"></i><p class="text-xs">Sin partidos todavía</p></div>`
     : allPartidos.map(p => {
         const fecha = parseDate(p.fechaHoraInicio).toLocaleString('es-AR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
         const marcador = p.estado==='FINALIZADO' ? ` · ${p.golesLocal}–${p.golesVisitante}` : '';
         let actions = '';
-        if (p.estado==='POR_JUGARSE') {
-          actions = `<button onclick="iniciarPartido(${p.id})"
-            class="flex items-center gap-1.5 text-xs bg-emerald-700 hover:bg-emerald-600 text-white px-3 py-1.5 rounded-xl font-semibold transition-all">
-            <i class="fas fa-play"></i>Iniciar
-          </button>`;
+        if (p.estado==='POR_JUGARSE' || p.estado==='APLAZADO') {
+          actions = `
+            <button onclick="openAplazarModal(${p.id})"
+              class="flex items-center gap-1.5 text-xs bg-amber-700 hover:bg-amber-600 text-white px-3 py-1.5 rounded-xl font-semibold transition-all">
+              <i class="fas fa-calendar-times"></i>Aplazar
+            </button>
+            <button onclick="iniciarPartido(${p.id})"
+              class="flex items-center gap-1.5 text-xs bg-emerald-700 hover:bg-emerald-600 text-white px-3 py-1.5 rounded-xl font-semibold transition-all">
+              <i class="fas fa-play"></i>Iniciar
+            </button>`;
         } else if (p.estado==='EN_JUEGO') {
           actions = `<button onclick="openResultadoModal(${p.id})"
             class="flex items-center gap-1.5 text-xs bg-orange-700 hover:bg-orange-600 text-white px-3 py-1.5 rounded-xl font-semibold transition-all">
@@ -1711,15 +1594,27 @@ async function loadPartidosAdmin() {
       }).join('');
 }
 
+function previewEquipoImagen(url) {
+  const prev = document.getElementById('equipo-imagen-preview');
+  if (url) {
+    prev.innerHTML = `<img src="${url}" class="w-full h-full object-cover" onerror="this.parentElement.innerHTML='<i class=\\'fas fa-exclamation-triangle\\' style=\\'color:#f87171\\'></i>'">`;
+  } else {
+    prev.innerHTML = '<i class="fas fa-image" style="color:#4b5563"></i>';
+  }
+}
+
 async function crearEquipo() {
-  const nombre = document.getElementById('equipo-nombre').value.trim();
-  const abreviatura = document.getElementById('equipo-abreviatura').value.trim().toUpperCase();
-  if (!nombre || !abreviatura) { toast('Completá nombre y abreviatura', 'error'); return; }
+  const nombre      = document.getElementById('equipo-nombre').value.trim();
+  const abreviatura = document.getElementById('equipo-abreviatura').value.trim().toUpperCase() || null;
+  const imagenUrl   = document.getElementById('equipo-imagen').value.trim() || null;
+  if (!nombre) { toast('Ingresá el nombre del equipo', 'error'); return; }
   try {
-    await api('POST', '/equipos', { nombre, abreviatura });
+    await api('POST', '/equipos', { nombre, abreviatura, imagenUrl });
     toast('Equipo creado: ' + nombre);
-    document.getElementById('equipo-nombre').value = '';
+    document.getElementById('equipo-nombre').value   = '';
     document.getElementById('equipo-abreviatura').value = '';
+    document.getElementById('equipo-imagen').value   = '';
+    document.getElementById('equipo-imagen-preview').innerHTML = '<i class="fas fa-image" style="color:#4b5563"></i>';
     allEquipos = await api('GET', '/equipos') || [];
     renderEquiposAdmin(); populatePartidoSelects();
   } catch(e) { toast(e.message, 'error'); }
@@ -1755,7 +1650,7 @@ async function crearPartidoAdmin() {
   if (!fechaId || !equipoLocalId || !equipoVisitanteId || !fechaHoraStr) {
     toast('Completá todos los campos', 'warn'); return;
   }
-  const fechaHoraInicio = new Date(fechaHoraStr).toISOString().slice(0, 19);
+  const fechaHoraInicio = new Date(fechaHoraStr).toISOString().slice(0,19);
   try {
     await api('POST', '/partidos', { fechaId, equipoLocalId, equipoVisitanteId, fechaHoraInicio });
     toast('Partido creado');
@@ -1777,7 +1672,7 @@ async function iniciarPartido(id) {
 // KEYBOARD
 // ═══════════════════════════════════════════════════
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') { closePronosticoModal(); closeResultadoModal(); }
+  if (e.key === 'Escape') { closePronosticoModal(); closeResultadoModal(); closeAplazarModal(); cerrarModalCodigo(); }
   if (e.key === 'Enter' && !document.getElementById('auth-screen').classList.contains('hidden')) {
     if (!document.getElementById('form-login').classList.contains('hidden')) login();
     else register();

@@ -2,6 +2,7 @@ package com.example.demo.services;
 
 import com.example.demo.dtos.RankingItemDTO;
 import com.example.demo.models.Grupo;
+import com.example.demo.models.Rol;
 import com.example.demo.models.Usuario;
 import com.example.demo.repositories.GrupoRepository;
 import com.example.demo.repositories.PronosticoRepository;
@@ -26,7 +27,7 @@ public class RankingService {
 
     public List<RankingItemDTO> rankingGlobal() {
         List<Usuario> usuarios = usuarioRepository
-                .findByFechaEliminacionIsNullOrderByPuntosDescCantidadExactosDesc();
+                .findByFechaEliminacionIsNullAndRolNotOrderByPuntosDescCantidadExactosDesc(Rol.ADMINISTRADOR);
         return buildRanking(usuarios);
     }
 

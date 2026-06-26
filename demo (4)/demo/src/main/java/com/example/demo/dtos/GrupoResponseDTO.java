@@ -8,6 +8,8 @@ import lombok.Data;
 public class GrupoResponseDTO {
     private Long id;
     private String nombre;
-    private String codigoDeAcceso;
+    private String codigoDeAcceso;   // null en el listado público
     private int cantidadIntegrantes;
+    private String creadorNombre;
+    private String creadorApellido;
 }

@@ -1,5 +1,6 @@
 package com.example.demo.services;
 
+import com.example.demo.dtos.AplazarPartidoDTO;
 import com.example.demo.dtos.PartidoRequestDTO;
 import com.example.demo.dtos.PartidoResponseDTO;
 import com.example.demo.dtos.ResultadoDTO;
@@ -96,10 +97,23 @@ public class PartidoService {
         return toDTO(partidoRepository.save(partido));
     }
 
+    public PartidoResponseDTO aplazarPartido(Long id, AplazarPartidoDTO dto) {
+        Partido partido = findOrThrow(id);
+        if (partido.getEstado() == EstadoPartido.EN_JUEGO || partido.getEstado() == EstadoPartido.FINALIZADO) {
+            throw new BusinessException("No se puede aplazar un partido que ya está en juego o finalizado");
+        }
+        if (dto.getNuevaFechaHoraInicio() == null) {
+            throw new BusinessException("Debe indicar la nueva fecha y hora");
+        }
+        partido.setFechaHoraInicio(dto.getNuevaFechaHoraInicio());
+        partido.setEstado(EstadoPartido.APLAZADO);
+        return toDTO(partidoRepository.save(partido));
+    }
+
     public PartidoResponseDTO iniciarPartido(Long id) {
         Partido partido = findOrThrow(id);
-        if (partido.getEstado() != EstadoPartido.POR_JUGARSE) {
-            throw new BusinessException("Solo se puede iniciar un partido en estado POR_JUGARSE");
+        if (partido.getEstado() != EstadoPartido.POR_JUGARSE && partido.getEstado() != EstadoPartido.APLAZADO) {
+            throw new BusinessException("Solo se puede iniciar un partido en estado POR_JUGARSE o APLAZADO");
         }
         partido.setEstado(EstadoPartido.EN_JUEGO);
         Partido saved = partidoRepository.save(partido);

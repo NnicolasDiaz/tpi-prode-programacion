@@ -38,6 +38,16 @@ public class GrupoController {
         return ResponseEntity.ok(grupoService.unirseAGrupo(dto.getCodigoDeAcceso(), usuario));
     }
 
+    @GetMapping
+    public ResponseEntity<List<GrupoResponseDTO>> listarTodos() {
+        return ResponseEntity.ok(grupoService.listarTodos());
+    }
+
+    @GetMapping("/mis-grupos")
+    public ResponseEntity<List<GrupoResponseDTO>> misGrupos(@AuthenticationPrincipal Usuario usuario) {
+        return ResponseEntity.ok(grupoService.listarMisGrupos(usuario));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<GrupoResponseDTO> obtener(@PathVariable Long id) {
         return ResponseEntity.ok(grupoService.obtenerGrupo(id));

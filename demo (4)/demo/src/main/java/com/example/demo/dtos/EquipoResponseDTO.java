@@ -9,4 +9,5 @@ public class EquipoResponseDTO {
     private Long id;
     private String nombre;
     private String abreviatura;
+    private String imagenUrl;
 }
