@@ -31,7 +31,8 @@
 
     /* ── Auth ─────────────────────────────────── */
     .auth-bg {
-      background: linear-gradient(145deg, #0b1120 0%, #1e3a8a 55%, #1d4ed8 100%);
+      background: linear-gradient(rgba(7,11,30,.72), rgba(7,11,30,.82)),
+                  url('/Gemini_Generated_Image_sovmosovmosovmos.png') center/cover no-repeat;
     }
     .glass {
       background: rgba(255,255,255,.08);
@@ -200,8 +201,8 @@
 
   <div class="relative w-full max-w-md">
     <div class="text-center mb-8">
-      <div class="inline-flex items-center justify-center w-20 h-20 glass rounded-3xl mb-4">
-        <span class="text-4xl">⚽</span>
+      <div class="inline-flex items-center justify-center mb-4">
+        <img src="/Gemini_Generated_Image_bavweybavweybavw.png" alt="Prode UTN" class="w-24 h-24 object-cover rounded-full shadow-2xl shadow-blue-900/60">
       </div>
       <h1 class="text-4xl font-extrabold text-white tracking-tight">Prode UTN</h1>
       <p class="text-blue-300 text-sm mt-1 font-medium tracking-wide">FRVM · Programación 4 · World Cup 2026</p>
@@ -304,7 +305,7 @@
       <div class="flex items-center justify-between h-16">
         <!-- Brand -->
         <div class="flex items-center gap-3">
-          <div class="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center text-xl shadow-lg shadow-blue-900/50">⚽</div>
+          <img src="/Gemini_Generated_Image_bavweybavweybavw.png" alt="logo" class="w-9 h-9 rounded-full object-cover shadow-lg shadow-blue-900/50 flex-shrink-0">
           <div>
             <div class="flex items-center gap-2">
               <span class="text-white font-bold text-base leading-none tracking-tight">Prode UTN</span>
@@ -379,10 +380,29 @@
 
     <!-- ══ TAB RANKING ════════════════════════════ -->
     <div id="tab-ranking" class="tab-content hidden">
-      <div class="mb-6">
-        <h2 class="text-2xl font-bold text-white">Tabla de Posiciones</h2>
-        <p class="text-gray-400 text-sm mt-0.5">Clasificación global de todos los jugadores</p>
+      <div class="flex flex-wrap items-end justify-between gap-3 mb-6">
+        <div>
+          <h2 class="text-2xl font-bold text-white">Tabla de Posiciones</h2>
+          <p id="ranking-subtitle" class="text-gray-400 text-sm mt-0.5">Clasificación global de todos los jugadores</p>
+        </div>
+        <div class="flex bg-gray-800 rounded-xl p-1 gap-1 border border-gray-700/60">
+          <button id="rtab-general" onclick="showRankingSubTab('general')"
+            class="rtab-btn px-4 py-2 rounded-lg text-sm font-semibold transition-all bg-blue-600 text-white">
+            <i class="fas fa-globe mr-1.5"></i>General
+          </button>
+          <button id="rtab-jornada" onclick="showRankingSubTab('jornada')"
+            class="rtab-btn px-4 py-2 rounded-lg text-sm font-semibold transition-all text-gray-400 hover:text-white">
+            <i class="fas fa-calendar-week mr-1.5"></i>Por Jornada
+          </button>
+        </div>
       </div>
+
+      <div id="ranking-jornada-selector" class="hidden mb-4">
+        <select id="ranking-fecha-select" onchange="onFechaRankingChange()" class="admin-input w-full md:w-80">
+          <option value="">— Seleccioná una jornada —</option>
+        </select>
+      </div>
+
       <div class="rounded-2xl overflow-hidden border border-gray-700/60" style="background:var(--surface)">
         <table class="w-full">
           <thead>
@@ -1288,42 +1308,121 @@ async function submitResultado() {
 // ═══════════════════════════════════════════════════
 // RANKING
 // ═══════════════════════════════════════════════════
+let _rankingSubTab = 'general';
+
 async function loadRanking() {
+  if (_rankingSubTab === 'general') await loadRankingGeneral();
+  else await loadFechasParaRanking();
+}
+
+function showRankingSubTab(tab) {
+  _rankingSubTab = tab;
+  document.querySelectorAll('.rtab-btn').forEach(b => {
+    b.classList.remove('bg-blue-600', 'text-white');
+    b.classList.add('text-gray-400');
+  });
+  const active = document.getElementById(`rtab-${tab}`);
+  active.classList.add('bg-blue-600', 'text-white');
+  active.classList.remove('text-gray-400');
+
+  const sel  = document.getElementById('ranking-jornada-selector');
+  const sub  = document.getElementById('ranking-subtitle');
+  if (tab === 'general') {
+    sel.classList.add('hidden');
+    sub.textContent = 'Clasificación global de todos los jugadores';
+    loadRankingGeneral();
+  } else {
+    sel.classList.remove('hidden');
+    sub.textContent = 'Puntos obtenidos en una jornada específica';
+    loadFechasParaRanking();
+  }
+}
+
+async function loadRankingGeneral() {
   const tbody = document.getElementById('ranking-body');
   try {
     const ranking = await api('GET', '/ranking');
-    if (!(ranking||[]).length) {
-      tbody.innerHTML = `<tr><td colspan="4" class="text-center py-16">
-        <i class="fas fa-trophy text-4xl text-gray-700 mb-3 block"></i>
-        <p class="text-gray-500">Sin participantes todavía</p>
-      </td></tr>`;
-      return;
-    }
-    const maxPts = ranking[0]?.puntos || 1;
-    const medals = ['🥇','🥈','🥉'];
-    tbody.innerHTML = ranking.map((r, i) => {
-      const isMe = currentUser && r.nombre===currentUser.nombre && r.apellido===currentUser.apellido;
-      const pct  = Math.round((r.puntos / maxPts) * 100);
-      const rowBg = i===0 ? 'rgba(245,158,11,.06)' : i===1 ? 'rgba(148,163,184,.03)' : i===2 ? 'rgba(205,127,50,.05)' : '';
-      return `<tr class="rank-row ${isMe?'ring-1 ring-inset ring-blue-500/30':''}" style="background:${rowBg}">
-        <td class="py-4 px-5 text-base">${i<3 ? medals[i] : `<span class="font-mono font-bold text-gray-500 text-sm">${r.posicion}</span>`}</td>
-        <td class="py-4 px-5">
-          <div class="font-semibold text-white text-sm">${r.nombre} ${r.apellido}</div>
-          ${isMe ? '<div class="text-xs text-blue-400 font-medium">← vos</div>' : ''}
-        </td>
-        <td class="py-4 px-5 text-center">
-          <span style="font-family:'Barlow Condensed',system-ui;font-size:1.5rem;font-weight:900;color:#fbbf24">${r.puntos}</span>
-          <span class="text-xs text-gray-600 ml-0.5">pts</span>
-          <div class="rank-bar-wrap w-20 mx-auto"><div class="rank-bar-fill" style="--bar-w:${pct}%"></div></div>
-        </td>
-        <td class="py-4 px-5 text-center hidden sm:table-cell">
-          <span class="font-semibold text-emerald-400">${r.cantidadExactos}</span>
-        </td>
-      </tr>`;
-    }).join('');
+    renderRankingTable(tbody, ranking);
   } catch(e) {
     tbody.innerHTML = `<tr><td colspan="4" class="text-center py-8 text-red-400">${e.message}</td></tr>`;
   }
+}
+
+async function loadFechasParaRanking() {
+  const sel   = document.getElementById('ranking-fecha-select');
+  const tbody = document.getElementById('ranking-body');
+  try {
+    const fechas  = await api('GET', '/fechas');
+    const validas = (fechas||[]).filter(f => f.estado === 'FINALIZADA' || f.estado === 'EN_JUEGO');
+    sel.innerHTML = '<option value="">— Seleccioná una jornada —</option>' +
+      validas.map(f => `<option value="${f.id}">${f.nombre} (${estadoFechaLabel(f.estado)})</option>`).join('');
+    if (validas.length > 0) {
+      sel.value = validas[0].id;
+      await loadRankingFecha(validas[0].id);
+    } else {
+      tbody.innerHTML = `<tr><td colspan="4" class="text-center py-16">
+        <i class="fas fa-calendar-times text-4xl text-gray-700 mb-3 block"></i>
+        <p class="text-gray-500 mt-2">No hay jornadas finalizadas todavía</p>
+      </td></tr>`;
+    }
+  } catch(e) { console.error(e); }
+}
+
+function estadoFechaLabel(estado) {
+  return {PROGRAMADA:'Programada',EN_JUEGO:'En Juego',FINALIZADA:'Finalizada',APLAZADA:'Aplazada'}[estado] || estado;
+}
+
+async function onFechaRankingChange() {
+  const id = document.getElementById('ranking-fecha-select').value;
+  if (id) await loadRankingFecha(id);
+}
+
+async function loadRankingFecha(fechaId) {
+  const tbody = document.getElementById('ranking-body');
+  tbody.innerHTML = `<tr><td colspan="4" class="py-12 text-center">
+    <div class="space-y-2 px-8">
+      <div class="skeleton h-10 w-full"></div>
+      <div class="skeleton h-10 w-full"></div>
+      <div class="skeleton h-10 w-full"></div>
+    </div></td></tr>`;
+  try {
+    const ranking = await api('GET', `/ranking/fecha/${fechaId}`);
+    renderRankingTable(tbody, ranking);
+  } catch(e) {
+    tbody.innerHTML = `<tr><td colspan="4" class="text-center py-8 text-red-400">${e.message}</td></tr>`;
+  }
+}
+
+function renderRankingTable(tbody, ranking) {
+  if (!(ranking||[]).length) {
+    tbody.innerHTML = `<tr><td colspan="4" class="text-center py-16">
+      <i class="fas fa-trophy text-4xl text-gray-700 mb-3 block"></i>
+      <p class="text-gray-500">Sin pronósticos registrados</p>
+    </td></tr>`;
+    return;
+  }
+  const maxPts = ranking[0]?.puntos || 1;
+  const medals = ['🥇','🥈','🥉'];
+  tbody.innerHTML = ranking.map((r, i) => {
+    const isMe  = currentUser && r.nombre===currentUser.nombre && r.apellido===currentUser.apellido;
+    const pct   = Math.round((r.puntos / maxPts) * 100);
+    const rowBg = i===0?'rgba(245,158,11,.06)':i===1?'rgba(148,163,184,.03)':i===2?'rgba(205,127,50,.05)':'';
+    return `<tr class="rank-row ${isMe?'ring-1 ring-inset ring-blue-500/30':''}" style="background:${rowBg}">
+      <td class="py-4 px-5 text-base">${i<3?medals[i]:`<span class="font-mono font-bold text-gray-500 text-sm">${r.posicion}</span>`}</td>
+      <td class="py-4 px-5">
+        <div class="font-semibold text-white text-sm">${r.nombre} ${r.apellido}</div>
+        ${isMe?'<div class="text-xs text-blue-400 font-medium">← vos</div>':''}
+      </td>
+      <td class="py-4 px-5 text-center">
+        <span style="font-family:'Barlow Condensed',system-ui;font-size:1.5rem;font-weight:900;color:#fbbf24">${r.puntos}</span>
+        <span class="text-xs text-gray-600 ml-0.5">pts</span>
+        <div class="rank-bar-wrap w-20 mx-auto"><div class="rank-bar-fill" style="--bar-w:${pct}%"></div></div>
+      </td>
+      <td class="py-4 px-5 text-center hidden sm:table-cell">
+        <span class="font-semibold text-emerald-400">${r.cantidadExactos}</span>
+      </td>
+    </tr>`;
+  }).join('');
 }
 
 // ═══════════════════════════════════════════════════
@@ -1369,6 +1468,10 @@ async function loadGrupos() {
             class="flex items-center gap-1.5 text-xs bg-blue-700 hover:bg-blue-600 text-white px-3 py-1.5 rounded-xl font-semibold transition-all">
             <i class="fas fa-trophy"></i>Ver ranking
           </button>
+          <button onclick="abandonarGrupo(${g.id})" title="Abandonar grupo"
+            class="flex items-center gap-1 text-xs text-orange-400 hover:text-orange-300 border border-orange-900/40 hover:border-orange-700/60 px-2.5 py-1.5 rounded-xl font-semibold transition-all">
+            <i class="fas fa-sign-out-alt"></i>
+          </button>
         </div>
       </div>`).join('');
   }
@@ -1395,7 +1498,7 @@ async function loadGrupos() {
               </div>
             </div>
           </div>
-          <div>
+          <div class="flex items-center gap-2">
             ${esMio
               ? `<button onclick="loadGrupoRanking(${g.id},'${g.nombre.replace(/'/g, "\\'")}')"
                   class="flex items-center gap-1.5 text-xs bg-blue-700 hover:bg-blue-600 text-white px-3 py-1.5 rounded-xl font-semibold transition-all">
@@ -1406,10 +1509,35 @@ async function loadGrupos() {
                   <i class="fas fa-lock"></i>Acceder
                 </button>`
             }
+            ${currentUser?.rol === 'ADMINISTRADOR'
+              ? `<button onclick="eliminarGrupo(${g.id})" title="Eliminar grupo"
+                  class="flex items-center gap-1 text-xs text-red-400 hover:text-red-300 border border-red-900/40 hover:border-red-700/60 px-2.5 py-1.5 rounded-xl font-semibold transition-all">
+                  <i class="fas fa-trash-alt"></i>
+                </button>`
+              : ''
+            }
           </div>
         </div>`;
     }).join('');
   }
+}
+
+async function abandonarGrupo(id) {
+  if (!confirm('¿Abandonar este grupo?')) return;
+  try {
+    await api('DELETE', `/grupos/${id}/abandonar`);
+    toast('Abandonaste el grupo');
+    loadGrupos();
+  } catch(e) { toast(e.message, 'error'); }
+}
+
+async function eliminarGrupo(id) {
+  if (!confirm('¿Eliminar este grupo? Esta acción no se puede deshacer.')) return;
+  try {
+    await api('DELETE', `/grupos/${id}`);
+    toast('Grupo eliminado');
+    loadGrupos();
+  } catch(e) { toast(e.message, 'error'); }
 }
 
 async function crearGrupo() {
@@ -1543,7 +1671,13 @@ function renderFechasAdmin() {
     : allFechas.map(f => `
         <div class="flex items-center justify-between px-4 py-2.5 rounded-xl border border-gray-700/60" style="background:var(--surface2)">
           <span class="font-medium text-white text-sm">${f.nombre}</span>
-          <span class="sbadge ${badgeMap[f.estado]||'sb-gris'}">${f.estado}</span>
+          <div class="flex items-center gap-2">
+            <span class="sbadge ${badgeMap[f.estado]||'sb-gris'}">${f.estado}</span>
+            <button onclick="eliminarJornada(${f.id})" title="Eliminar jornada"
+              class="text-red-400 hover:text-red-300 border border-red-900/40 hover:border-red-700/60 px-2 py-1 rounded-lg text-xs transition-all">
+              <i class="fas fa-trash-alt"></i>
+            </button>
+          </div>
         </div>`).join('');
 }
 
@@ -1627,6 +1761,15 @@ async function eliminarEquipo(id) {
     toast('Equipo eliminado');
     allEquipos = await api('GET', '/equipos') || [];
     renderEquiposAdmin(); populatePartidoSelects();
+  } catch(e) { toast(e.message, 'error'); }
+}
+
+async function eliminarJornada(id) {
+  if (!confirm('¿Eliminar esta jornada? Esta acción no se puede deshacer.')) return;
+  try {
+    await api('DELETE', `/fechas/${id}`);
+    toast('Jornada eliminada');
+    await loadAdminData();
   } catch(e) { toast(e.message, 'error'); }
 }
 

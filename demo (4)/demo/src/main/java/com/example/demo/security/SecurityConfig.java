@@ -51,7 +51,13 @@ public class SecurityConfig {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/", "/index.html", "/favicon.ico", "/api/auth/**", "/error").permitAll()
+                .requestMatchers(
+                    "/", "/index.html", "/favicon.ico", "/error", "/api/auth/**",
+                    "/Gemini_Generated_Image_bavweybavweybavw.png",
+                    "/Gemini_Generated_Image_sovmosovmosovmos.png",
+                    "/*.png", "/*.jpg", "/*.jpeg", "/*.gif", "/*.svg", "/*.ico",
+                    "/*.js", "/*.css", "/*.woff", "/*.woff2", "/*.ttf"
+                ).permitAll()
                 .anyRequest().authenticated()
             )
             .authenticationProvider(authenticationProvider())

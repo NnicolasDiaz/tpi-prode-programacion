@@ -18,6 +18,10 @@ public interface PronosticoRepository extends JpaRepository<Pronostico, Long> {
     boolean existsByPartidoId(Long partidoId);
     long countByUsuarioIdAndResultadoPronostico(Long usuarioId, ResultadoPronostico resultado);
 
+    List<Pronostico> findByPartidoIdIn(List<Long> ids);
+
+    void deleteByUsuarioIdIn(List<Long> usuarioIds);
+
     @Query("SELECT p.usuario.id, MIN(p.fechaCreacion) FROM Pronostico p GROUP BY p.usuario.id")
     List<Object[]> findOldestPronosticoDates();
 }

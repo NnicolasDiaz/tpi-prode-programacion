@@ -62,6 +62,21 @@ public class GrupoService {
         return toDTO(grupoRepository.save(grupo));
     }
 
+    public void abandonarGrupo(Long grupoId, Usuario usuario) {
+        Grupo grupo = grupoRepository.findById(grupoId)
+                .orElseThrow(() -> new ResourceNotFoundException("Grupo no encontrado"));
+        if (grupo.getFechaEliminacion() != null) {
+            throw new BusinessException("El grupo ya no existe");
+        }
+        boolean esMiembro = grupo.getIntegrantes().stream()
+                .anyMatch(u -> u.getId().equals(usuario.getId()));
+        if (!esMiembro) {
+            throw new BusinessException("No sos integrante de este grupo");
+        }
+        grupo.getIntegrantes().removeIf(u -> u.getId().equals(usuario.getId()));
+        grupoRepository.save(grupo);
+    }
+
     @Transactional(readOnly = true)
     public GrupoResponseDTO obtenerGrupo(Long id) {
         return toDTO(grupoRepository.findById(id)
@@ -83,6 +98,16 @@ public class GrupoService {
                 .filter(g -> g.getIntegrantes().stream().anyMatch(u -> u.getId().equals(usuario.getId())))
                 .map(this::toDTO)
                 .toList();
+    }
+
+    public void eliminarGrupo(Long id) {
+        Grupo grupo = grupoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Grupo no encontrado"));
+        if (grupo.getFechaEliminacion() != null) {
+            throw new BusinessException("El grupo ya fue eliminado");
+        }
+        grupo.setFechaEliminacion(java.time.LocalDateTime.now(java.time.ZoneOffset.UTC));
+        grupoRepository.save(grupo);
     }
 
     private String generarCodigoUnico() {

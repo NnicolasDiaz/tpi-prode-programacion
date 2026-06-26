@@ -11,6 +11,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -57,5 +58,20 @@ public class GrupoController {
     @GetMapping("/{id}/ranking")
     public ResponseEntity<List<RankingItemDTO>> rankingGrupo(@PathVariable Long id) {
         return ResponseEntity.ok(rankingService.rankingGrupo(id));
+    }
+
+    @DeleteMapping("/{id}/abandonar")
+    public ResponseEntity<Void> abandonar(
+            @PathVariable Long id,
+            @AuthenticationPrincipal Usuario usuario) {
+        grupoService.abandonarGrupo(id, usuario);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
+    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
+        grupoService.eliminarGrupo(id);
+        return ResponseEntity.noContent().build();
     }
 }

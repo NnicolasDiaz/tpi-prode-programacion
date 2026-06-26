@@ -56,12 +56,6 @@ public class FechaService {
 
     public void eliminarFecha(Long id) {
         Fecha fecha = findOrThrow(id);
-        if (fecha.getEstado() != EstadoFecha.PROGRAMADA) {
-            throw new BusinessException("Solo se puede eliminar una fecha en estado PROGRAMADA");
-        }
-        if (!partidoRepository.findByFechaIdOrderByFechaHoraInicioAsc(id).isEmpty()) {
-            throw new BusinessException("No se puede eliminar: la fecha tiene partidos asociados");
-        }
         fecha.setFechaEliminacion(LocalDateTime.now(ZoneOffset.UTC));
         fechaRepository.save(fecha);
     }

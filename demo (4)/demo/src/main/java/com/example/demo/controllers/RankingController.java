@@ -1,5 +1,6 @@
 package com.example.demo.controllers;
 
+import com.example.demo.dtos.RankingFechaItemDTO;
 import com.example.demo.dtos.RankingItemDTO;
 import com.example.demo.services.RankingService;
 import lombok.RequiredArgsConstructor;
@@ -23,5 +24,10 @@ public class RankingController {
     @GetMapping("/grupo/{grupoId}")
     public ResponseEntity<List<RankingItemDTO>> rankingGrupo(@PathVariable Long grupoId) {
         return ResponseEntity.ok(rankingService.rankingGrupo(grupoId));
+    }
+
+    @GetMapping("/fecha/{fechaId}")
+    public ResponseEntity<List<RankingFechaItemDTO>> rankingPorFecha(@PathVariable Long fechaId) {
+        return ResponseEntity.ok(rankingService.rankingPorFecha(fechaId));
     }
 }
