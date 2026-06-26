@@ -31,8 +31,16 @@
 
     /* ── Auth ─────────────────────────────────── */
     .auth-bg {
-      background: linear-gradient(rgba(7,11,30,.72), rgba(7,11,30,.82)),
-                  url('/Gemini_Generated_Image_sovmosovmosovmos.png') center/cover no-repeat;
+      background: url('/Gemini_Generated_Image_sovmosovmosovmos.png') center/cover no-repeat;
+    }
+    .auth-bg::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(160deg, rgba(7,14,40,.55) 0%, rgba(10,20,60,.45) 60%, rgba(5,10,30,.6) 100%);
+      backdrop-filter: blur(1px);
+      pointer-events: none;
+      z-index: 0;
     }
     .glass {
       background: rgba(255,255,255,.08);
@@ -193,13 +201,13 @@
 <body class="min-h-screen">
 
 <!-- ═══════════ LOGIN / REGISTRO ════════════════════ -->
-<div id="auth-screen" class="auth-bg min-h-screen flex items-center justify-center p-4">
+<div id="auth-screen" class="auth-bg relative min-h-screen flex items-center justify-center p-4">
   <div class="absolute inset-0 overflow-hidden pointer-events-none">
     <div class="absolute -top-24 -left-24 w-96 h-96 bg-blue-500 opacity-5 rounded-full blur-3xl"></div>
     <div class="absolute -bottom-32 right-0 w-80 h-80 bg-indigo-500 opacity-5 rounded-full blur-3xl"></div>
   </div>
 
-  <div class="relative w-full max-w-md">
+  <div class="relative z-10 w-full max-w-md">
     <div class="text-center mb-8">
       <div class="inline-flex items-center justify-center mb-4">
         <img src="/Gemini_Generated_Image_bavweybavweybavw.png" alt="Prode UTN" class="w-24 h-24 object-cover rounded-full shadow-2xl shadow-blue-900/60">
