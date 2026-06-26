@@ -10,7 +10,7 @@ import java.util.Optional;
 
 @Repository
 public interface FechaRepository extends JpaRepository<Fecha, Long> {
-    List<Fecha> findByEstado(EstadoFecha estado);
+    List<Fecha> findByEstadoAndFechaEliminacionIsNull(EstadoFecha estado);
     boolean existsByNombre(String nombre);
     Optional<Fecha> findByNombre(String nombre);
 }

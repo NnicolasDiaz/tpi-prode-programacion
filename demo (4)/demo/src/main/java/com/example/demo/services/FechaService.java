@@ -37,9 +37,11 @@ public class FechaService {
     @Transactional(readOnly = true)
     public List<FechaResponseDTO> listarFechas(EstadoFecha estado) {
         List<Fecha> fechas = (estado != null)
-                ? fechaRepository.findByEstado(estado)
+                ? fechaRepository.findByEstadoAndFechaEliminacionIsNull(estado)
                 : fechaRepository.findAll();
-        return fechas.stream().map(this::toDTO).toList();
+        return fechas.stream()
+                .filter(f -> f.getFechaEliminacion() == null)
+                .map(this::toDTO).toList();
     }
 
     public FechaResponseDTO modificarNombre(Long id, FechaRequestDTO dto) {
